@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -43,13 +42,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import static android.animation.PropertyValuesHolder.ofFloat;
 import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
 import static com.squareup.picasso.MemoryPolicy.NO_STORE;
 
 /**
  * using MD360Renderer
- *用于主页页面的继承类
+ * 用于主页页面的继承类
  * Created by hzqiujiadi on 16/1/22.
  * hzqiujiadi ashqalcn@gmail.com
  */
@@ -57,57 +55,12 @@ public abstract class ExMenuActivity extends Activity {
 
     private static final String TAG = "MD360PlayerActivity";
 
-    private static final SparseArray<String> sDisplayMode = new SparseArray<>();
-    private static final SparseArray<String> sInteractiveMode = new SparseArray<>();
-    private static final SparseArray<String> sProjectionMode = new SparseArray<>();
-    private static final SparseArray<String> sAntiDistortion = new SparseArray<>();
-    private static final SparseArray<String> sPitchFilter = new SparseArray<>();
-    private static final SparseArray<String> sFlingEnabled = new SparseArray<>();
-
-    static {
-        sDisplayMode.put(MDVRLibrary.DISPLAY_MODE_NORMAL,"NORMAL");
-        sDisplayMode.put(MDVRLibrary.DISPLAY_MODE_GLASS,"GLASS");
-
-        sInteractiveMode.put(MDVRLibrary.INTERACTIVE_MODE_MOTION,"MOTION");
-        sInteractiveMode.put(MDVRLibrary.INTERACTIVE_MODE_TOUCH,"TOUCH");
-        sInteractiveMode.put(MDVRLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH,"M & T");
-        sInteractiveMode.put(MDVRLibrary.INTERACTIVE_MODE_CARDBORAD_MOTION,"CARDBOARD M");
-        sInteractiveMode.put(MDVRLibrary.INTERACTIVE_MODE_CARDBORAD_MOTION_WITH_TOUCH,"CARDBOARD M&T");
-
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_SPHERE,"SPHERE");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_DOME180,"DOME 180");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_DOME230,"DOME 230");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_DOME180_UPPER,"DOME 180 UPPER");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_DOME230_UPPER,"DOME 230 UPPER");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL,"STEREO H SPHERE");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_STEREO_SPHERE_VERTICAL,"STEREO V SPHERE");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_PLANE_FIT,"PLANE FIT");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_PLANE_CROP,"PLANE CROP");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_PLANE_FULL,"PLANE FULL");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL,"MULTI FISH EYE HORIZONTAL");
-        sProjectionMode.put(MDVRLibrary.PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL,"MULTI FISH EYE VERTICAL");
-        sProjectionMode.put(CustomProjectionFactory.CUSTOM_PROJECTION_FISH_EYE_RADIUS_VERTICAL,"CUSTOM MULTI FISH EYE");
-
-        sAntiDistortion.put(1,"ANTI-ENABLE");
-        sAntiDistortion.put(0,"ANTI-DISABLE");
-
-        sPitchFilter.put(1,"FILTER PITCH");
-        sPitchFilter.put(0,"FILTER NOP");
-
-        sFlingEnabled.put(1, "FLING ENABLED");
-        sFlingEnabled.put(0, "FLING DISABLED");
-    }
-
-    public static void startVideo(Context context, Uri uri){
-        start(context, uri, VideoPlayerActivity.class);
-    }
-
-    public static void startBitmap(Context context, Uri uri){
+    public static void startBitmap(Context context, Uri uri) {
         start(context, uri, BitmapPlayerActivityEx.class);
     }
 
-    private static void start(Context context, Uri uri, Class<? extends Activity> clz){
-        Intent i = new Intent(context,clz);
+    private static void start(Context context, Uri uri, Class<? extends Activity> clz) {
+        Intent i = new Intent(context, clz);
         i.setData(uri);
         context.startActivity(i);
     }
@@ -123,6 +76,10 @@ public abstract class ExMenuActivity extends Activity {
     private List<MDAbsPlugin> plugins = new LinkedList<>();
 
     private MDPosition logoPosition = MDMutablePosition.newInstance().setY(-8.0f).setYaw(-90.0f);
+    private MDPosition onePosition = MDPosition.newInstance().setZ(-8.0f).setX(-1.6f);
+    private MDPosition twoPosition = MDPosition.newInstance().setZ(-8.0f).setX(1.6f);
+    private MDPosition threePosition = MDPosition.newInstance().setZ(-8.0f).setX(1.6f).setY(-2.2f);
+    private MDPosition fourPosition = MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-2.2f);
 
     private MDPosition[] positions = new MDPosition[]{
             MDPosition.newInstance().setZ(-8.0f).setYaw(-45.0f),
@@ -164,7 +121,7 @@ public abstract class ExMenuActivity extends Activity {
             @Override
             public void onClick(View v) {
                 MDHotspotBuilder builder = MDHotspotBuilder.create(mImageLoadProvider)
-                        .size(4f,4f)
+                        .size(4f, 4f)
                         .provider(activity, R.drawable.moredoo_logo)
                         .title("logo")
                         .position(logoPosition)
@@ -177,7 +134,7 @@ public abstract class ExMenuActivity extends Activity {
                 MDAbsHotspot hotspot = new MDSimpleHotspot(builder);
                 plugins.add(hotspot);
                 getVRLibrary().addPlugin(hotspot);
-                Toast.makeText(ExMenuActivity.this, "add plugin logo" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(ExMenuActivity.this, "add plugin logo", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -185,7 +142,7 @@ public abstract class ExMenuActivity extends Activity {
         findViewById(R.id.button_remove_plugin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (plugins.size() > 0){
+                if (plugins.size() > 0) {
                     MDAbsPlugin plugin = plugins.remove(plugins.size() - 1);
                     getVRLibrary().removePlugin(plugin);
                 }
@@ -197,7 +154,7 @@ public abstract class ExMenuActivity extends Activity {
             @Override
             public void onClick(View v) {
                 MDHotspotBuilder builder = MDHotspotBuilder.create(mImageLoadProvider)
-                        .size(4f,4f)
+                        .size(4f, 4f)
                         .provider(activity, R.drawable.moredoo_logo)
                         .title("front logo")
                         .tag("tag-front")
@@ -218,101 +175,61 @@ public abstract class ExMenuActivity extends Activity {
         getVRLibrary().setEyePickChangedListener(new MDVRLibrary.IEyePickListener() {
             @Override
             public void onHotspotHit(IMDHotspot hotspot, long hitTimestamp) {
-                if (hotspot!=null){
-                    if (System.currentTimeMillis() - hitTimestamp > 2000){
-                        if ("A".equals(hotspot.getTag())){
-                            Log.e("vr","选中——view1");
-
-                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_A));
+                if (hotspot != null) {
+                    if (System.currentTimeMillis() - hitTimestamp > 2000) {
+                        if ("A".equals(hotspot.getTag())) {
+                            Log.e("vr", "选中——view1");
+                            ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_A));
 //                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse("http://cache.utovr.com/201508270528174780.m3u8"));
-                        }else if ("B".equals(hotspot.getTag())){
-                            Log.e("vr","选中——view2");
-                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_WEB));
-                        }else if ("C".equals(hotspot.getTag())){
-                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_C));
-                        }else if ("D".equals(hotspot.getTag())){
+                        } else if ("B".equals(hotspot.getTag())) {
+                            Log.e("vr", "选中——view2");
+                            ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_WEB));
+                        } else if ("C".equals(hotspot.getTag())) {
+                            ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_C));
+                        } else if ("D".equals(hotspot.getTag())) {
 //                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
                         }
-                    }else{
-                        if ("A".equals(hotspot.getTag())){
-//                            getVRLibrary().removePlugin();
-                            Log.e("vr","看中——view 1");
-//                            poni1.setText("选中view1");
-//                            poni2.setText("选中view1");
-                        }else if ("B".equals(hotspot.getTag())){
-                            Log.e("vr","看中——view 2");
-//                            view.setBackgroundResource(R.drawable.ic_close);
-//                            view.setAnimation(animation);
-                            /** 开始动画 */
-//                            animation.startNow();
-                        }else if ("C".equals(hotspot.getTag())){
-                            Log.e("vr","看中——view 3");
-                        }else if ("D".equals(hotspot.getTag())){
-                            Log.e("vr","看中——view 4");
-//                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
-                            /** 结束动画 */
-//                            animation.cancel();
-                        }else{
-                            Log.e("vr","nothing");
+                    } else {
+                        if (hotspot.getTag()==null){
+                            return;
                         }
+                        switch (hotspot.getTag()) {
+                            case "A":
+
+                                break;
+                            case "B":
+                                getVRLibrary().findViewByTag("B");
+//                                setView(R.drawable.dome_pic);
+//                                addTwo(R.drawable.dome_pic);
+//                                isok=true;
+                                break;
+                        }
+                        Log.e("vr", "看中——view " + hotspot.getTag());
                     }
 //                    view.setBackgroundResource(R.drawable.img_page);
-
-                }else{
-                    Log.e("vr","nothing2");
+                } else {
+//                    if (!isok) {
+//                        setView(R.drawable.img_page);
+//                        addTwo(R.drawable.img_page);
+//                        Log.e("test", "33333");
+//                    }
+                    Log.e("vr", "nothing2");
 //                    view.setBackgroundResource(R.drawable.img_page);
 //                    poni1.setText("+");
 //                    poni2.setText("+");
 //                    text.setTextColor(getResources().getColor(R.color.colorAccent));
 
                 }
-                String text = hotspot == null ? "nop" : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(), (System.currentTimeMillis() - hitTimestamp) / 1000.0f );
+                String text = hotspot == null ? "nop" : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(), (System.currentTimeMillis() - hitTimestamp) / 1000.0f);
                 hotspotText.setText(text);
 
-//                String brief = getVRLibrary().getDirectorBrief().toString();
-//                directorBriefText.setText(brief);
-
-//                if (System.currentTimeMillis() - hitTimestamp > 2000){
-//                    Log.e("vr",hitTimestamp+"-注视--");
-//                    getVRLibrary().resetEyePick();
-//                }else{
-//                    Log.e("vr","未完成。。。。");
-//                }
-//                Log.e("vr",hitTimestamp+"---");
-            }
-        });
-
-        //升空视角
-        findViewById(R.id.button_camera_little_planet).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MDDirectorCamUpdate cameraUpdate = getVRLibrary().updateCamera();
-                PropertyValuesHolder near = ofFloat("near", cameraUpdate.getNearScale(), -0.5f);
-                PropertyValuesHolder eyeZ = PropertyValuesHolder.ofFloat("eyeZ", cameraUpdate.getEyeZ(), 18f);
-                PropertyValuesHolder pitch = PropertyValuesHolder.ofFloat("pitch", cameraUpdate.getPitch(), 90f);
-                PropertyValuesHolder yaw = PropertyValuesHolder.ofFloat("yaw", cameraUpdate.getYaw(), 90f);
-                PropertyValuesHolder roll = PropertyValuesHolder.ofFloat("roll", cameraUpdate.getRoll(), 0f);
-                startCameraAnimation(cameraUpdate, near, eyeZ, pitch, yaw, roll);
-            }
-        });
-
-        //回复正常视角
-        findViewById(R.id.button_camera_to_normal).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MDDirectorCamUpdate cameraUpdate = getVRLibrary().updateCamera();
-                PropertyValuesHolder near = ofFloat("near", cameraUpdate.getNearScale(), 0f);
-                PropertyValuesHolder eyeZ = PropertyValuesHolder.ofFloat("eyeZ", cameraUpdate.getEyeZ(), 0f);
-                PropertyValuesHolder pitch = PropertyValuesHolder.ofFloat("pitch", cameraUpdate.getPitch(), 0f);
-                PropertyValuesHolder yaw = PropertyValuesHolder.ofFloat("yaw", cameraUpdate.getYaw(), 0f);
-                PropertyValuesHolder roll = PropertyValuesHolder.ofFloat("roll", cameraUpdate.getRoll(), 0f);
-                startCameraAnimation(cameraUpdate, near, eyeZ, pitch, yaw, roll);
             }
         });
     }
 
+    private boolean isok = false;
 
-    public void addOne(){
+    public void addOne() {
 //        View view = new HoverView(this);
 //        view.setBackgroundColor(0x55FFCC11);
         View view = new ImageView(this);
@@ -320,41 +237,85 @@ public abstract class ExMenuActivity extends Activity {
         MDViewBuilder builder = MDViewBuilder.create()
                 .provider(view, 300/*view width*/, 200/*view height*/)
                 .size(3, 2)
-                .position(MDPosition.newInstance().setZ(-8.0f).setX(-1.6f))
+                .position(onePosition)
                 .title("md view")
-                .tag("A")
-                ;
+                .tag("A");
 
+        Log.e("getD", onePosition.toString() + "----");
         MDAbsView mdView = new MDView(builder);
         mdView.rotateToCamera();
         plugins.add(mdView);
         getVRLibrary().addPlugin(mdView);
     }
-    MDViewBuilder builder;
+
+
+    MDViewBuilder buildertwo;
     MDAbsView mdView;
     View view;
-    public void addTwo(int width,int height){
+
+    public void setView(int resid) {
         view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.img_page);
-        builder = MDViewBuilder.create()
-                .provider(view, width, height)
-                .size(3, 2)
-                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f))
-                .title("md view")
-                .tag("B")
-                ;
-//        builder.listenClick(new MDVRLibrary.ITouchPickListener() {
-//            @Override
-//            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
-//                Log.e("vr","two_listenclick....");
-//            }
-//        });
-        mdView = new MDView(builder);
-        mdView.rotateToCamera();
-        plugins.add(mdView);
-        getVRLibrary().addPlugin(mdView);
+        view.setBackgroundResource(resid);
     }
-    public void addThree(){
+
+    public void addTwo(int resid) {
+//        setView(R.drawable.img_page);
+        view = new ImageView(this);
+        view.setBackgroundResource(resid);
+            buildertwo = MDViewBuilder.create();
+            buildertwo.provider(view, 300, 200);
+            buildertwo.size(3, 2);
+            buildertwo.position(twoPosition);
+            buildertwo.title("md view");
+            buildertwo.tag("B");
+            mdView = new MDView(buildertwo);
+            mdView.rotateToCamera();
+            plugins.add(mdView);
+            getVRLibrary().addPlugin(mdView);
+    }
+
+    public void addTwo2(int resid) {
+//        setView(R.drawable.img_page);
+        view = new ImageView(this);
+        view.setBackgroundResource(resid);
+
+        if (buildertwo == null) {
+            buildertwo = MDViewBuilder.create();
+            buildertwo.provider(view, 300, 200);
+            buildertwo.size(3, 2);
+            buildertwo.position(twoPosition);
+            buildertwo.title("md view");
+            buildertwo.tag("B");
+            isok = true;
+            mdView = new MDView(buildertwo);
+            mdView.rotateToCamera();
+            plugins.add(mdView);
+            getVRLibrary().addPlugin(mdView);
+        } else {
+            if (isok) {
+//                buildertwo.provider(view, 500, 200);
+                buildertwo.size(7, 3);
+                Log.e("test", "11111");
+                getVRLibrary().removePlugin(mdView);
+                mdView = new MDView(buildertwo);
+                mdView.rotateToCamera();
+                plugins.add(mdView);
+                getVRLibrary().addPlugin(mdView);
+                isok=false;
+            } else {
+//                buildertwo.provider(view, 300, 200);
+                buildertwo.size(3, 2);
+                Log.e("test", "2222");
+                getVRLibrary().removePlugin(mdView);
+                mdView = new MDView(buildertwo);
+                mdView.rotateToCamera();
+                plugins.add(mdView);
+                getVRLibrary().addPlugin(mdView);
+            }
+        }
+    }
+
+    public void addThree() {
 //        View view = new HoverView(this);
 //        view.setBackgroundColor(0x55FFCC11);
 
@@ -363,28 +324,28 @@ public abstract class ExMenuActivity extends Activity {
         MDViewBuilder builder = MDViewBuilder.create()
                 .provider(view, 300/*view width*/, 200/*view height*/)
                 .size(3, 2)
-                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f).setY(-2.2f))
+                .position(threePosition)
                 .title("md view")
-                .tag("C")
-                ;
+                .tag("C");
         MDAbsView mdView = new MDView(builder);
         mdView.rotateToCamera();
         plugins.add(mdView);
         getVRLibrary().addPlugin(mdView);
     }
+
     TextView text;
-    public void initMenu(){
+
+    public void addFour() {
         text = new TextView(this);
         text.setBackgroundResource(R.drawable.dome_pic);
-        text.setText("菜单");
+//        text.setText("菜单");
         text.setTextColor(getResources().getColor(R.color.colorAccent));
         MDViewBuilder builder = MDViewBuilder.create()
                 .provider(text, 300/*view width*/, 200/*view height*/)
                 .size(3, 2)
-                .position(MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-2.2f))
+                .position(fourPosition)
                 .title("md view")
-                .tag("D")
-                ;
+                .tag("D");
         MDAbsView mdView = new MDView(builder);
         mdView.rotateToCamera();
         plugins.add(mdView);
@@ -394,8 +355,8 @@ public abstract class ExMenuActivity extends Activity {
 
     private ValueAnimator animator;
 
-    private void startCameraAnimation(final MDDirectorCamUpdate cameraUpdate, PropertyValuesHolder... values){
-        if (animator != null){
+    private void startCameraAnimation(final MDDirectorCamUpdate cameraUpdate, PropertyValuesHolder... values) {
+        if (animator != null) {
             animator.cancel();
         }
 
@@ -446,17 +407,17 @@ public abstract class ExMenuActivity extends Activity {
 
     protected Uri getUri() {
         Intent i = getIntent();
-        if (i == null || i.getData() == null){
+        if (i == null || i.getData() == null) {
             return null;
         }
         return i.getData();
     }
 
-    public void cancelBusy(){
+    public void cancelBusy() {
         findViewById(R.id.progress).setVisibility(View.GONE);
     }
 
-    public void busy(){
+    public void busy() {
         findViewById(R.id.progress).setVisibility(View.VISIBLE);
     }
 
@@ -482,9 +443,9 @@ public abstract class ExMenuActivity extends Activity {
     }
 
     // picasso impl
-    private class ImageLoadProvider implements MDVRLibrary.IImageLoadProvider{
+    private class ImageLoadProvider implements MDVRLibrary.IImageLoadProvider {
 
-        private SimpleArrayMap<Uri,Target> targetMap = new SimpleArrayMap<>();
+        private SimpleArrayMap<Uri, Target> targetMap = new SimpleArrayMap<>();
 
         @Override
         public void onProvideBitmap(final Uri uri, final MD360BitmapTexture.Callback callback) {
@@ -509,7 +470,7 @@ public abstract class ExMenuActivity extends Activity {
                 }
             };
             targetMap.put(uri, target);
-            Picasso.with(getApplicationContext()).load(uri).resize(callback.getMaxTextureSize(),callback.getMaxTextureSize()).onlyScaleDown().centerInside().memoryPolicy(NO_CACHE, NO_STORE).into(target);
+            Picasso.with(getApplicationContext()).load(uri).resize(callback.getMaxTextureSize(), callback.getMaxTextureSize()).onlyScaleDown().centerInside().memoryPolicy(NO_CACHE, NO_STORE).into(target);
         }
     }
 }

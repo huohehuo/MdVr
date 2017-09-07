@@ -44,16 +44,16 @@ public class BitmapPlayerActivityEx extends ExMenuActivity {
 //                getVRLibrary().notifyPlayerChanged();
 //            }
 //        });
+        addOne();
+        addTwo(R.drawable.img_page);
+        addThree();
+        addFour();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        getVRLibrary().removePlugins();
-        addOne();
-        addTwo(300,200);
-        addThree();
-        initMenu();
+//        getVRLibrary().removePlugins();
     }
 
     private Target mTarget;// keep the reference for picasso.
