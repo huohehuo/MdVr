@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.util.Log;
-import android.view.View;
 
 import com.asha.vrlib.MDVRLibrary;
 import com.asha.vrlib.model.MDPosition;
@@ -26,9 +25,9 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public class BitmapPlayerActivity extends MD360PlayerActivity {
+public class BitmapPlayerActivityEx extends ExMenuActivity {
 
-    private static final String TAG = "BitmapPlayerActivity";
+    private static final String TAG = "BitmapPlayerActivityEx";
     private MDPosition logoPosition = MDMutablePosition.newInstance().setY(-8.0f).setYaw(-90.0f);
 
     private Uri nextUri;
@@ -37,14 +36,14 @@ public class BitmapPlayerActivity extends MD360PlayerActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                busy();
-                nextUri = getDrawableUri(R.drawable.texture);
-                getVRLibrary().notifyPlayerChanged();
-            }
-        });
+//        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                busy();
+//                nextUri = getDrawableUri(R.drawable.texture);
+//                getVRLibrary().notifyPlayerChanged();
+//            }
+//        });
     }
 
     @Override
@@ -52,7 +51,9 @@ public class BitmapPlayerActivity extends MD360PlayerActivity {
         super.onResume();
         getVRLibrary().removePlugins();
         addOne();
-        addTwo();
+        addTwo(300,200);
+        addThree();
+        initMenu();
     }
 
     private Target mTarget;// keep the reference for picasso.

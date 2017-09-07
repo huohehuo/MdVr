@@ -2,7 +2,6 @@ package com.asha.vrlib.model;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.asha.vrlib.MDVRLibrary;
@@ -108,7 +107,6 @@ public class MDHotspotBuilder {
 
     public MDHotspotBuilder listenClick(MDVRLibrary.ITouchPickListener listener) {
         builderDelegate.listenClick(listener);
-        Log.e("md","asdf");
         return this;
     }
 

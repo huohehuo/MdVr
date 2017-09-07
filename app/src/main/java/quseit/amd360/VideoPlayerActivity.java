@@ -3,7 +3,6 @@ package quseit.amd360;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Surface;
-import android.view.View;
 import android.widget.Toast;
 
 import com.asha.vrlib.MD360Director;
@@ -18,7 +17,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public class VideoPlayerActivity extends MD360PlayerActivity {
+public class VideoPlayerActivity extends ExVideoActivity {
 
     private static final String TAG = "VideoPlayerActivity";
     private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
@@ -29,7 +28,7 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
         super.onCreate(savedInstanceState);
         mMediaPlayerWrapper.init();
 
-
+        addOne();
 
         mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
@@ -63,16 +62,16 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
             mMediaPlayerWrapper.prepare();
         }
 
-        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMediaPlayerWrapper.pause();
-                mMediaPlayerWrapper.destroy();
-                mMediaPlayerWrapper.init();
-//                mMediaPlayerWrapper.openRemoteFile(DemoActivity.sPath + "video_31b451b7ca49710719b19d22e19d9e60.mp4");
-                mMediaPlayerWrapper.prepare();
-            }
-        });
+//        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mMediaPlayerWrapper.pause();
+//                mMediaPlayerWrapper.destroy();
+//                mMediaPlayerWrapper.init();
+////                mMediaPlayerWrapper.openRemoteFile(DemoActivity.sPath + "video_31b451b7ca49710719b19d22e19d9e60.mp4");
+//                mMediaPlayerWrapper.prepare();
+//            }
+//        });
 
     }
 
@@ -119,7 +118,6 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        getVRLibrary().removePlugins();
         mMediaPlayerWrapper.pause();
     }
 

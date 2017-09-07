@@ -41,6 +41,7 @@ import com.squareup.picasso.Target;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.animation.PropertyValuesHolder.ofFloat;
 import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
@@ -48,11 +49,11 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
 
 /**
  * using MD360Renderer
- *
+ *用于主页页面的继承类
  * Created by hzqiujiadi on 16/1/22.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public abstract class MD360PlayerActivity extends Activity {
+public abstract class ExMenuActivity extends Activity {
 
     private static final String TAG = "MD360PlayerActivity";
 
@@ -147,7 +148,7 @@ public abstract class MD360PlayerActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // set content view
-        setContentView(R.layout.activity_md_using_surface_view);
+        setContentView(R.layout.activity_md_using_surface_view_menu);
 
         // init VR Library
         mVRLibrary = createVRLibrary();
@@ -157,90 +158,6 @@ public abstract class MD360PlayerActivity extends Activity {
         final List<View> hotspotPoints = new LinkedList<>();
         hotspotPoints.add(findViewById(R.id.hotspot_point1));
         hotspotPoints.add(findViewById(R.id.hotspot_point2));
-//        //选择普通模式，眼镜模式
-//        SpinnerHelper.with(this)
-//                .setData(sDisplayMode)
-//                .setDefault(mVRLibrary.getDisplayMode())
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        mVRLibrary.switchDisplayMode(MD360PlayerActivity.this, key);
-//                        int i = 0;
-//                        int size = key == MDVRLibrary.DISPLAY_MODE_GLASS ? 2 : 1;
-//                        for (View point : hotspotPoints){
-//                            point.setVisibility(i < size ? View.VISIBLE : View.GONE);
-//                            i++;
-//                        }
-//                    }
-//                })
-//                .init(R.id.spinner_display);
-//
-//        //选择触摸或者陀螺仪
-//        SpinnerHelper.with(this)
-//                .setData(sInteractiveMode)
-//                .setDefault(mVRLibrary.getInteractiveMode())
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        mVRLibrary.switchInteractiveMode(MD360PlayerActivity.this, key);
-//                    }
-//                })
-//                .init(R.id.spinner_interactive);
-//
-//        SpinnerHelper.with(this)
-//                .setData(sProjectionMode)
-//                .setDefault(mVRLibrary.getProjectionMode())
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        mVRLibrary.switchProjectionMode(MD360PlayerActivity.this, key);
-//                    }
-//                })
-//                .init(R.id.spinner_projection);
-
-//        SpinnerHelper.with(this)
-//                .setData(sAntiDistortion)
-//                .setDefault(mVRLibrary.isAntiDistortionEnabled() ? 1 : 0)
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        mVRLibrary.setAntiDistortionEnabled(key != 0);
-//                    }
-//                })
-//                .init(R.id.spinner_distortion);
-
-//        findViewById(R.id.button_add_plugin).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final int index = (int) (Math.random() * 100) % positions.length;
-//                MDPosition position = positions[index];
-//                MDHotspotBuilder builder = MDHotspotBuilder.create(mImageLoadProvider)
-//                        .size(4f,4f)
-//                        .provider(0, activity, android.R.drawable.star_off)
-//                        .provider(1, activity, android.R.drawable.star_on)
-//                        .provider(10, activity, android.R.drawable.checkbox_off_background)
-//                        .provider(11, activity, android.R.drawable.checkbox_on_background)
-//                        .listenClick(new MDVRLibrary.ITouchPickListener() {
-//                            @Override
-//                            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
-//                                if (hitHotspot instanceof MDWidgetPlugin){
-//                                    MDWidgetPlugin widgetPlugin = (MDWidgetPlugin) hitHotspot;
-//                                    widgetPlugin.setChecked(!widgetPlugin.getChecked());
-//                                }
-//                            }
-//                        })
-//                        .title("star" + index)
-//                        .position(position)
-//                        .status(0,1)
-//                        .checkedStatus(10,11);
-//
-//                MDWidgetPlugin plugin = new MDWidgetPlugin(builder);
-//
-//                plugins.add(plugin);
-//                getVRLibrary().addPlugin(plugin);
-//                Toast.makeText(MD360PlayerActivity.this, "add plugin position:" + position, Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         //添加底部logo
         findViewById(R.id.button_add_plugin_logo).setOnClickListener(new View.OnClickListener() {
@@ -254,13 +171,13 @@ public abstract class MD360PlayerActivity extends Activity {
                         .listenClick(new MDVRLibrary.ITouchPickListener() {
                             @Override
                             public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
-                                Toast.makeText(MD360PlayerActivity.this, "click logo", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ExMenuActivity.this, "click logo", Toast.LENGTH_SHORT).show();
                             }
                         });
                 MDAbsHotspot hotspot = new MDSimpleHotspot(builder);
                 plugins.add(hotspot);
                 getVRLibrary().addPlugin(hotspot);
-                Toast.makeText(MD360PlayerActivity.this, "add plugin logo" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(ExMenuActivity.this, "add plugin logo" , Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -274,16 +191,6 @@ public abstract class MD360PlayerActivity extends Activity {
                 }
             }
         });
-
-        //去掉
-        findViewById(R.id.button_remove_plugins).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                plugins.clear();
-                getVRLibrary().removePlugins();
-            }
-        });
-
 
         //添加热点logo
         findViewById(R.id.button_add_hotspot_front).setOnClickListener(new View.OnClickListener() {
@@ -302,76 +209,6 @@ public abstract class MD360PlayerActivity extends Activity {
             }
         });
 
-//        findViewById(R.id.button_rotate_to_camera_plugin).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                IMDHotspot hotspot = getVRLibrary().findHotspotByTag("tag-front");
-//                if (hotspot != null){
-//                    hotspot.rotateToCamera();
-//                }
-//            }
-//        });
-
-//        findViewById(R.id.button_add_md_view).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                TextView textView = new TextView(activity);
-//                textView.setBackgroundColor(0x55FFCC11);
-//                textView.setText("Hello world.");
-//
-//                MDViewBuilder builder = MDViewBuilder.create()
-//                        .provider(textView, 400/*view width*/, 100/*view height*/)
-//                        .size(4, 1)
-//                        .position(MDPosition.newInstance().setZ(-12.0f))
-//                        .title("md view")
-//                        .tag("tag-md-text-view")
-//                        ;
-//
-//                MDAbsView mdView = new MDView(builder);
-//                plugins.add(mdView);
-//                getVRLibrary().addPlugin(mdView);
-//            }
-//        });
-
-//        findViewById(R.id.button_update_md_view).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MDAbsView mdView = getVRLibrary().findViewByTag("tag-md-text-view");
-//                if (mdView != null){
-//                    TextView textView = mdView.castAttachedView(TextView.class);
-//                    textView.setText("Cheer up!");
-//                    textView.setBackgroundColor(0x8800FF00);
-//                    mdView.invalidate();
-//                }
-//            }
-//        });
-
-
-        //添加菜單塊
-
-        //添加模块
-
-        //添加模块
-        findViewById(R.id.button_md_view_hover).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View view = new HoverView(activity);
-                view.setBackgroundColor(0x55FFCC11);
-
-                MDViewBuilder builder = MDViewBuilder.create()
-                        .provider(view, 300/*view width*/, 200/*view height*/)
-                        .size(3, 2)
-                        .position(MDPosition.newInstance().setZ(-8.0f))
-                        .title("md view")
-                        .tag("tag-md-text-view")
-                        ;
-
-                MDAbsView mdView = new MDView(builder);
-                  mdView.rotateToCamera();
-                plugins.add(mdView);
-                getVRLibrary().addPlugin(mdView);
-            }
-        });
 
         final TextView hotspotText = (TextView) findViewById(R.id.hotspot_text);
         final TextView directorBriefText = (TextView) findViewById(R.id.director_brief_text);
@@ -385,34 +222,55 @@ public abstract class MD360PlayerActivity extends Activity {
                     if (System.currentTimeMillis() - hitTimestamp > 2000){
                         if ("A".equals(hotspot.getTag())){
                             Log.e("vr","选中——view1");
-                            finish();
-//                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse(Config.VIDEO_A));
+
+                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_A));
 //                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse("http://cache.utovr.com/201508270528174780.m3u8"));
                         }else if ("B".equals(hotspot.getTag())){
                             Log.e("vr","选中——view2");
-                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse(Config.VIDEO_WEB));
+                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_WEB));
                         }else if ("C".equals(hotspot.getTag())){
-                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse(Config.VIDEO_C));
+                            ExMenuActivity.startVideo(ExMenuActivity.this,Uri.parse(Config.VIDEO_C));
                         }else if ("D".equals(hotspot.getTag())){
 //                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
                         }
                     }else{
                         if ("A".equals(hotspot.getTag())){
+//                            getVRLibrary().removePlugin();
                             Log.e("vr","看中——view 1");
+//                            poni1.setText("选中view1");
+//                            poni2.setText("选中view1");
                         }else if ("B".equals(hotspot.getTag())){
                             Log.e("vr","看中——view 2");
+//                            view.setBackgroundResource(R.drawable.ic_close);
+//                            view.setAnimation(animation);
+                            /** 开始动画 */
+//                            animation.startNow();
                         }else if ("C".equals(hotspot.getTag())){
                             Log.e("vr","看中——view 3");
                         }else if ("D".equals(hotspot.getTag())){
                             Log.e("vr","看中——view 4");
+//                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
+                            /** 结束动画 */
+//                            animation.cancel();
                         }else{
                             Log.e("vr","nothing");
                         }
                     }
+//                    view.setBackgroundResource(R.drawable.img_page);
+
                 }else{
                     Log.e("vr","nothing2");
+//                    view.setBackgroundResource(R.drawable.img_page);
+//                    poni1.setText("+");
+//                    poni2.setText("+");
+//                    text.setTextColor(getResources().getColor(R.color.colorAccent));
 
                 }
+                String text = hotspot == null ? "nop" : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(), (System.currentTimeMillis() - hitTimestamp) / 1000.0f );
+                hotspotText.setText(text);
+
+//                String brief = getVRLibrary().getDirectorBrief().toString();
+//                directorBriefText.setText(brief);
 
 //                if (System.currentTimeMillis() - hitTimestamp > 2000){
 //                    Log.e("vr",hitTimestamp+"-注视--");
@@ -451,56 +309,18 @@ public abstract class MD360PlayerActivity extends Activity {
                 startCameraAnimation(cameraUpdate, near, eyeZ, pitch, yaw, roll);
             }
         });
-
-//        SpinnerHelper.with(this)
-//                .setData(sPitchFilter)
-//                .setDefault(0)
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        MDVRLibrary.IDirectorFilter filter = key == 0 ? null : new MDVRLibrary.DirectorFilterAdatper() {
-//                            @Override
-//                            public float onFilterPitch(float input) {
-//                                if (input > 70){
-//                                    return 70;
-//                                }
-//
-//                                if (input < -70){
-//                                    return -70;
-//                                }
-//
-//                                return input;
-//                            }
-//                        };
-//
-//                        getVRLibrary().setDirectorFilter(filter);
-//                    }
-//                })
-//                .init(R.id.spinner_pitch_filter);
-//
-//        SpinnerHelper.with(this)
-//                .setData(sFlingEnabled)
-//                .setDefault(getVRLibrary().isFlingEnabled() ? 1 : 0)
-//                .setClickHandler(new SpinnerHelper.ClickHandler() {
-//                    @Override
-//                    public void onSpinnerClicked(int index, int key, String value) {
-//                        getVRLibrary().setFlingEnabled(key == 1);
-//                    }
-//                })
-//                .init(R.id.spinner_fling_enable);
     }
 
 
     public void addOne(){
 //        View view = new HoverView(this);
 //        view.setBackgroundColor(0x55FFCC11);
-
         View view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.ic_close_video);
+        view.setBackgroundResource(R.drawable.img_page);
         MDViewBuilder builder = MDViewBuilder.create()
                 .provider(view, 300/*view width*/, 200/*view height*/)
                 .size(3, 2)
-                .position(MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-10.0f))
+                .position(MDPosition.newInstance().setZ(-8.0f).setX(-1.6f))
                 .title("md view")
                 .tag("A")
                 ;
@@ -510,30 +330,67 @@ public abstract class MD360PlayerActivity extends Activity {
         plugins.add(mdView);
         getVRLibrary().addPlugin(mdView);
     }
-//    MDViewBuilder builder;
-//    MDAbsView mdView;
-//    View view;
-//    public void addTwo(int width,int height){
-//        view = new ImageView(this);
-//        view.setBackgroundResource(R.drawable.img_page);
-//        builder = MDViewBuilder.create()
-//                .provider(view, width, height)
-//                .size(3, 2)
-//                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f))
-//                .title("md view")
-//                .tag("B")
-//                ;
-////        builder.listenClick(new MDVRLibrary.ITouchPickListener() {
-////            @Override
-////            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
-////                Log.e("vr","two_listenclick....");
-////            }
-////        });
-//        mdView = new MDView(builder);
-//        mdView.rotateToCamera();
-//        plugins.add(mdView);
-//        getVRLibrary().addPlugin(mdView);
-//    }
+    MDViewBuilder builder;
+    MDAbsView mdView;
+    View view;
+    public void addTwo(int width,int height){
+        view = new ImageView(this);
+        view.setBackgroundResource(R.drawable.img_page);
+        builder = MDViewBuilder.create()
+                .provider(view, width, height)
+                .size(3, 2)
+                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f))
+                .title("md view")
+                .tag("B")
+                ;
+//        builder.listenClick(new MDVRLibrary.ITouchPickListener() {
+//            @Override
+//            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+//                Log.e("vr","two_listenclick....");
+//            }
+//        });
+        mdView = new MDView(builder);
+        mdView.rotateToCamera();
+        plugins.add(mdView);
+        getVRLibrary().addPlugin(mdView);
+    }
+    public void addThree(){
+//        View view = new HoverView(this);
+//        view.setBackgroundColor(0x55FFCC11);
+
+        View view = new ImageView(this);
+        view.setBackgroundResource(R.drawable.img_page);
+        MDViewBuilder builder = MDViewBuilder.create()
+                .provider(view, 300/*view width*/, 200/*view height*/)
+                .size(3, 2)
+                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f).setY(-2.2f))
+                .title("md view")
+                .tag("C")
+                ;
+        MDAbsView mdView = new MDView(builder);
+        mdView.rotateToCamera();
+        plugins.add(mdView);
+        getVRLibrary().addPlugin(mdView);
+    }
+    TextView text;
+    public void initMenu(){
+        text = new TextView(this);
+        text.setBackgroundResource(R.drawable.dome_pic);
+        text.setText("菜单");
+        text.setTextColor(getResources().getColor(R.color.colorAccent));
+        MDViewBuilder builder = MDViewBuilder.create()
+                .provider(text, 300/*view width*/, 200/*view height*/)
+                .size(3, 2)
+                .position(MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-2.2f))
+                .title("md view")
+                .tag("D")
+                ;
+        MDAbsView mdView = new MDView(builder);
+        mdView.rotateToCamera();
+        plugins.add(mdView);
+        getVRLibrary().addPlugin(mdView);
+    }
+
 
     private ValueAnimator animator;
 
