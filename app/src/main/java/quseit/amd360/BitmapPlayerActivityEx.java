@@ -44,10 +44,11 @@ public class BitmapPlayerActivityEx extends ExMenuActivity {
 //                getVRLibrary().notifyPlayerChanged();
 //            }
 //        });
-        addOne();
-        addTwo(R.drawable.img_page);
-        addThree();
-        addFour();
+//        addOne();
+//        addTwo(R.drawable.img_page);
+//        addThree();
+//        addFour();
+        initMenu();
     }
 
     @Override

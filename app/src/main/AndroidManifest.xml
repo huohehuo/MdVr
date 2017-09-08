@@ -21,6 +21,7 @@
         </activity>
         <activity
             android:name=".VideoPlayerActivity"
+            android:launchMode="singleTask"
             android:configChanges="screenSize|orientation"
             android:label="VideoPlayerActivity"
             android:screenOrientation="landscape" />

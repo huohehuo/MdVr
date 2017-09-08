@@ -2,6 +2,7 @@ package quseit.amd360;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.Toast;
 
@@ -28,7 +29,8 @@ public class VideoPlayerActivity extends ExVideoActivity {
         super.onCreate(savedInstanceState);
         mMediaPlayerWrapper.init();
 
-        addOne();
+        backBtn();
+//        playBtn();
 
         mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
@@ -126,4 +128,21 @@ public class VideoPlayerActivity extends ExVideoActivity {
         super.onResume();
         mMediaPlayerWrapper.resume();
     }
+    //双击退出程序
+    private long firstTime = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+//            if (System.currentTimeMillis() - firstTime > 2000) {
+//                firstTime = System.currentTimeMillis();
+//            } else {
+//                finish();
+//            }
+//            clossss();
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 }

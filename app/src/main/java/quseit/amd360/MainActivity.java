@@ -11,14 +11,13 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String sPath = "file:///sdcard/DCIM/Camera/qqq.mp4";
-    public static final String sPathImg = "file:///sdcard/DCIM/Camera/tvimg.jpg";
     EditText editText;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            ExMenuActivity.startBitmap(MainActivity.this, Uri.parse(sPathImg));
+//            ExMenuActivity.startBitmap(MainActivity.this, Uri.parse(Config.IMG_MAIN));
+            ExMenuActivity.startBitmap(MainActivity.this, Uri.parse("http://attachments.gfan.com/forum/attachments2/201408/28/225557gmw08txms60gqag6.jpg"));
             finish();
 
         }

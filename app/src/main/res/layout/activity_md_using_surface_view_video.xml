@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".MD360PlayerActivity">
 
    <FrameLayout
@@ -14,25 +15,38 @@
           android:layout_width="match_parent"
           android:layout_height="match_parent" />
       <LinearLayout
+          android:id="@+id/ll_view"
           android:orientation="horizontal"
           android:layout_width="match_parent"
           android:layout_height="match_parent">
-         <TextView
+         <RelativeLayout
              android:id="@+id/hotspot_point1"
-             android:text="+"
              android:textColor="@android:color/white"
              android:gravity="center"
              android:layout_weight="1"
              android:layout_width="0dp"
-             android:layout_height="match_parent" />
-         <TextView
+             android:layout_height="match_parent" >
+            <ImageView
+                android:id="@+id/iv_hover_video_left"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_hover_normal"
+                />
+         </RelativeLayout>
+         <RelativeLayout
              android:id="@+id/hotspot_point2"
-             android:text="+"
              android:textColor="@android:color/white"
              android:gravity="center"
              android:layout_weight="1"
              android:layout_width="0dp"
-             android:layout_height="match_parent" />
+             android:layout_height="match_parent" >
+            <ImageView
+                android:id="@+id/iv_hover_video_right"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_hover_normal"
+                />
+         </RelativeLayout>
       </LinearLayout>
    </FrameLayout>
    <ProgressBar

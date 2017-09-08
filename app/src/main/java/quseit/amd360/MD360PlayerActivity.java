@@ -49,7 +49,7 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
 /**
  * using MD360Renderer
  *
- * Created by hzqiujiadi on 16/1/22.
+ * Created by hzqiujiadi on 16/1/22.(弃用）
  * hzqiujiadi ashqalcn@gmail.com
  */
 public abstract class MD360PlayerActivity extends Activity {
@@ -241,6 +241,8 @@ public abstract class MD360PlayerActivity extends Activity {
 //                Toast.makeText(MD360PlayerActivity.this, "add plugin position:" + position, Toast.LENGTH_SHORT).show();
 //            }
 //        });
+
+        //添加底部logo
 
         //添加底部logo
         findViewById(R.id.button_add_plugin_logo).setOnClickListener(new View.OnClickListener() {
