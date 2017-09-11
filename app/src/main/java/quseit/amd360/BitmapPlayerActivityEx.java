@@ -48,7 +48,7 @@ public class BitmapPlayerActivityEx extends ExMenuActivity {
 //        addTwo(R.drawable.img_page);
 //        addThree();
 //        addFour();
-        initMenu();
+        initMenu(true);
     }
 
     @Override

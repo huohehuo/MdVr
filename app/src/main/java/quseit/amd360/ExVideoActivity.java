@@ -1,8 +1,6 @@
 package quseit.amd360;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,14 +43,14 @@ public abstract class ExVideoActivity extends Activity {
 
     private static final String TAG = "ExVideoActivity";
 
-    public static void startVideo(Context context, Uri uri){
-        start(context, uri, VideoPlayerActivity.class);
-    }
-    private static void start(Context context, Uri uri, Class<? extends Activity> clz){
-        Intent i = new Intent(context,clz);
-        i.setData(uri);
-        context.startActivity(i);
-    }
+//    public static void startVideo(Context context, Uri uri){
+//        start(context, uri, VideoPlayerActivity.class);
+//    }
+//    private static void start(Context context, Uri uri, Class<? extends Activity> clz){
+//        Intent i = new Intent(context,clz);
+//        i.setData(uri);
+//        context.startActivity(i);
+//    }
 
     private MDVRLibrary mVRLibrary;
 
@@ -79,7 +77,7 @@ public abstract class ExVideoActivity extends Activity {
 //            MDPosition.newInstance().setZ(-3.0f).setYaw(15.0f).setAngleX(-45).setAngleY(45),
 //            MDPosition.newInstance().setZ(-3.0f).setYaw(0.0f).setAngleX(90),
 //    };
-
+    private String clickName="";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,47 +100,47 @@ public abstract class ExVideoActivity extends Activity {
         hotspotPoints.add(findViewById(R.id.hotspot_point2));
 
 
-//重定位
         findViewById(R.id.ll_view).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                getVRLibrary().removePlugins();
-                backBtn();
-//                playBtn();
-
+            public void onClick(View view) {
+                switch (clickName){
+                    case "ivClose":
+                        finish();
+                        break;
+                    case "ivPlay":
+                        Log.e("play","click play");
+                        break;
+                }
             }
         });
-
+        findViewById(R.id.ll_view).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                getVRLibrary().removePlugins();
+//                initMenu(true);
+                initMenu();
+                return true;
+            }
+        });
 
 
         getVRLibrary().setEyePickChangedListener(new MDVRLibrary.IEyePickListener() {
             @Override
             public void onHotspotHit(IMDHotspot hotspot, long hitTimestamp) {
                 if (hotspot!=null){
-                    if (System.currentTimeMillis() - hitTimestamp > 1000){
-                        if ("A".equals(hotspot.getTag())){
-                            Log.e("vr","选中——view1");
-                            finish();
-                        }else if ("B".equals(hotspot.getTag())){
-                            Log.e("vr","选中——view2");
-                        }else if ("C".equals(hotspot.getTag())){
-//                            ExVideoActivity.startVideo(ExVideoActivity.this,Uri.parse(Config.VIDEO_C));
-                        }else if ("D".equals(hotspot.getTag())){
-//                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
-                        }
-                    }else{
-                        switch (hotspot.getTag()==null?"":hotspot.getTag()) {
-                            case "A":
-                                Log.e("vv","wa___a");
+//                    if (System.currentTimeMillis() - hitTimestamp > 1000)
+                    clickName=hotspot.getTag();
+                 switch (hotspot.getTag()==null?"":hotspot.getTag()) {
+                            case "ivClose":
+
                                 break;
-                            case "B":
-                                playBtn2();
+                            case "ivPlay":
+                                playBtn(true);
                                 break;
                         }
-                    }
-                }else{
-                    Log.e("vr","nothing2");
-                        playBtn3();
+
+                        Log.e("vr","nothing2");
+                        playBtn(false);
                 }
 
             }
@@ -151,80 +149,77 @@ public abstract class ExVideoActivity extends Activity {
 
     }
 
-    public void clossss(){
-        finish();
-    }
-
-
-    public void backBtn(){
-//        View view = new HoverView(this);
-//        view.setBackgroundColor(0x55FFCC11);
-        View view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.ic_close_video);
+    //初始化页面模块
+    public void initMenu(){
+        //关闭按钮
+        ivClose = new ImageView(this);
+        ivClose.setBackgroundResource(R.drawable.ic_close_video);
         MDViewBuilder builder = MDViewBuilder.create()
-                .provider(view, 100/*view width*/, 100/*view height*/)
+                .provider(ivClose, 100/*view width*/, 100/*view height*/)
                 .size(1, 1)
                 .position(backPosition)
-                .title("md view")
-                .tag("A")
+                .title("ivClose")
+                .tag("ivClose")
                 ;
-
         MDAbsView mdView = new MDView(builder);
+
+        //播放按钮
+        ivPlay=new ImageView(this);
+        ivPlay.setBackgroundResource(R.drawable.ic_pause);
+        MDViewBuilder builderPlay = MDViewBuilder.create()
+                .provider(ivPlay, 100/*view width*/, 100/*view height*/)
+                .size(1, 1)
+                .position(playPosition)
+                .title("ivPlay")
+                .tag("ivPlay")
+                ;
+        MDAbsView mdView2 = new MDView(builderPlay);
         mdView.rotateToCamera();
+        mdView2.rotateToCamera();
         plugins.add(mdView);
+        plugins.add(mdView2);
         getVRLibrary().addPlugin(mdView);
+        getVRLibrary().addPlugin(mdView2);
+    }
 
+    private View ivPlay,ivClose;
+    public void playBtn(boolean change){
+        if (ivPlay==null){
+            Log.e("view","textView更新");
+            ivPlay=new ImageView(this);
+            ivPlay.setBackgroundResource(R.drawable.ic_pause);
+        }
+        if (change){
+            //暂停播放
+            ivPlay.setBackgroundResource(R.drawable.ic_play);
+            MDViewBuilder builder = MDViewBuilder.create()
+                    .provider(ivPlay, 100/*view width*/, 100/*view height*/)
+                    .size(1, 1)
+                    .position(playPosition)
+                    .title("ivPlay")
+                    .tag("ivPlay")
+                    ;
+            MDAbsView mdView = new MDView(builder);
+            plugins.add(mdView);
+            getVRLibrary().addPlugin(mdView);
+        }else{
+            ivPlay.setBackgroundResource(R.drawable.ic_pause);
+//            getVRLibrary().removePlugin(getVRLibrary().findViewByTag("ivPlaying"));
+            MDViewBuilder builder = MDViewBuilder.create()
+                    .provider(ivPlay, 100/*view width*/, 100/*view height*/)
+                    .size(1, 1)
+                    .position(playPosition)
+                    .title("ivPlay")
+                    .tag("ivPlay")
+                    ;
+            MDAbsView mdView = new MDView(builder);
+            plugins.add(mdView);
+            getVRLibrary().addPlugin(mdView);
+        }
 
 
     }
-    public void playBtn(){
-        View view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.ic_play);
-        MDViewBuilder builder = MDViewBuilder.create()
-                .provider(view, 100/*view width*/, 100/*view height*/)
-                .size(1, 1)
-                .position(playPosition)
-                .title("md view")
-                .tag("B")
-                ;
 
-        MDAbsView mdView = new MDView(builder);
-        mdView.rotateToCamera();
-        plugins.add(mdView);
-        getVRLibrary().addPlugin(mdView);
-    }
-
-    private boolean isPlay=false;
-    public void playBtn2(){
-        View view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.ic_play);
-        MDViewBuilder builder = MDViewBuilder.create()
-                .provider(view, 100/*view width*/, 100/*view height*/)
-                .size(1, 1)
-                .position(playPosition)
-                .title("md view")
-                .tag("B")
-                ;
-
-        MDAbsView mdView = new MDView(builder);
-        plugins.add(mdView);
-        getVRLibrary().addPlugin(mdView);
-    }
-    public void playBtn3(){
-        View view = new ImageView(this);
-        view.setBackgroundResource(R.drawable.ic_pause);
-        MDViewBuilder builder = MDViewBuilder.create()
-                .provider(view, 100/*view width*/, 100/*view height*/)
-                .size(1, 1)
-                .position(playPosition)
-                .title("md view")
-                .tag("B")
-                ;
-
-        MDAbsView mdView = new MDView(builder);
-        plugins.add(mdView);
-        getVRLibrary().addPlugin(mdView);
-    }
 //    MDViewBuilder builder;
 //    MDAbsView mdView;
 //    View view;
@@ -271,6 +266,7 @@ public abstract class ExVideoActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.e("click","video destory");
         mVRLibrary.onDestroy();
     }
 
@@ -280,13 +276,13 @@ public abstract class ExVideoActivity extends Activity {
         mVRLibrary.onOrientationChanged(this);
     }
 
-    protected Uri getUri() {
-        Intent i = getIntent();
-        if (i == null || i.getData() == null){
-            return null;
-        }
-        return i.getData();
-    }
+//    protected Uri getUri() {
+//        Intent i = getIntent();
+//        if (i == null || i.getData() == null){
+//            return null;
+//        }
+//        return i.getData();
+//    }
 
     public void cancelBusy(){
         findViewById(R.id.progress).setVisibility(View.GONE);

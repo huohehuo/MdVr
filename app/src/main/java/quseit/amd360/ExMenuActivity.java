@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.asha.vrlib.MDDirectorCamUpdate;
 import com.asha.vrlib.MDVRLibrary;
 import com.asha.vrlib.model.MDPosition;
+import com.asha.vrlib.model.MDRay;
 import com.asha.vrlib.model.MDViewBuilder;
 import com.asha.vrlib.model.position.MDMutablePosition;
 import com.asha.vrlib.plugins.MDAbsPlugin;
@@ -74,22 +76,23 @@ public abstract class ExMenuActivity extends Activity {
 
     private List<MDAbsPlugin> plugins = new LinkedList<>();
 
-    private MDPosition logoPosition = MDMutablePosition.newInstance().setY(-8.0f).setYaw(-90.0f);
+    private MDPosition logoPosition = MDMutablePosition.newInstance().setY(-12.0f).setYaw(-90.0f);
 
-    private MDPosition topLogoPosition = MDMutablePosition.newInstance().setZ(-8.0f).setX(-3.2f).setY(2.5f);
+    private MDPosition topLogoPosition = MDMutablePosition.newInstance().setZ(-12.0f).setX(-3.2f).setY(2.5f);
 
-    private MDPosition topTimePosition = MDMutablePosition.newInstance().setZ(-8.0f).setX(3.2f).setY(2.5f);
+    private MDPosition topTimePosition = MDMutablePosition.newInstance().setZ(-12.0f).setX(3.2f).setY(2.8f);
+    private MDPosition topWifiPosition = MDMutablePosition.newInstance().setZ(-12.0f).setX(2.5f).setY(2.8f);
 
-    private MDPosition top1Position = MDMutablePosition.newInstance().setZ(-8.0f).setX(-1.2f).setY(2.0f);
-    private MDPosition top2Position = MDMutablePosition.newInstance().setZ(-8.0f).setY(2.0f);
-    private MDPosition top3Position = MDMutablePosition.newInstance().setZ(-8.0f).setX(1.2f).setY(2.0f);
+    private MDPosition top1Position = MDMutablePosition.newInstance().setZ(-12.0f).setX(-1.2f).setY(2.0f);
+    private MDPosition top2Position = MDMutablePosition.newInstance().setZ(-12.0f).setY(2.0f);
+    private MDPosition top3Position = MDMutablePosition.newInstance().setZ(-12.0f).setX(1.2f).setY(2.0f);
 
 
 
-    private MDPosition onePosition = MDPosition.newInstance().setZ(-8.0f).setX(-1.6f);
-    private MDPosition twoPosition = MDPosition.newInstance().setZ(-8.0f).setX(1.6f);
-    private MDPosition threePosition = MDPosition.newInstance().setZ(-8.0f).setX(1.6f).setY(-3.2f);
-    private MDPosition fourPosition = MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-3.2f);
+    private MDPosition menu1Position = MDPosition.newInstance().setZ(-12.0f).setX(-1.6f);
+    private MDPosition menu2Position = MDPosition.newInstance().setZ(-12.0f).setX(1.6f);
+    private MDPosition menu3Position = MDPosition.newInstance().setZ(-12.0f).setX(1.6f).setY(-3.2f);
+    private MDPosition menu4Position = MDPosition.newInstance().setZ(-12.0f).setX(-1.6f).setY(-3.2f);
 
     private MDPosition[] positions = new MDPosition[]{
             MDPosition.newInstance().setZ(-8.0f).setYaw(-45.0f),
@@ -109,13 +112,13 @@ public abstract class ExMenuActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what){
                 case 1:
-                    initMenu();
+                    initMenu(true);
                     break;
 
             }
         }
     };
-
+    private String clickName="";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,16 +143,22 @@ public abstract class ExMenuActivity extends Activity {
         hotspotPoints.add(findViewById(R.id.hotspot_point1));
         hotspotPoints.add(findViewById(R.id.hotspot_point2));
 
-        //重定位
         findViewById(R.id.ll_view).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                switch (clickName){
+                    case "menu2":
+                        VideoPlayerActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_WEB));
+                        break;
+                }
+            }
+        });
+        findViewById(R.id.ll_view).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 getVRLibrary().removePlugins();
-                initMenu();
-//                if (plugins.size() > 0) {
-//                    MDAbsPlugin plugin = plugins.remove(plugins.size() - 1);
-//                    getVRLibrary().removePlugin(plugin);
-//                }
+                initMenu(true);
+                return true;
             }
         });
 
@@ -159,70 +168,67 @@ public abstract class ExMenuActivity extends Activity {
             @Override
             public void onHotspotHit(IMDHotspot hotspot, long hitTimestamp) {
                 if (hotspot != null) {
-                    if (System.currentTimeMillis() - hitTimestamp > 1000) {
-                        switch (hotspot.getTag()==null?"":hotspot.getTag()) {
-                            case "A":
-                                Log.e("vv","wa___a");
-                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_A));
-                                getVRLibrary().resetEyePick();
-                                break;
-                            case "B":
-                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_WEB));
-                                getVRLibrary().resetEyePick();
-                                break;
-                            case "C":
-                                break;
-                            case "D":
-                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_C));
-                                getVRLibrary().resetEyePick();
-                                break;
-                        }
-                        getVRLibrary().resetEyePick();
-
-//                        if ("A".equals(hotspot.getTag())) {
-//                            Log.e("vr", "选中——view1");
-//                            if (isGoVideo){
-//                                isGoVideo=false;
-//                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_A));
+//                    if (System.currentTimeMillis() - hitTimestamp > 5000)
+//                        Log.e("time", (System.currentTimeMillis() - hitTimestamp) / 1000.0f+"");
+//                        switch (hotspot.getTag()==null?"":hotspot.getTag()) {
+//                            case "menu1":
+////                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_A));
 //                                getVRLibrary().resetEyePick();
-//                            }
-////                            MD360PlayerActivity.startVideo(MD360PlayerActivity.this,Uri.parse("http://cache.utovr.com/201508270528174780.m3u8"));
-//                        } else if ("B".equals(hotspot.getTag())) {
-//                            Log.e("vr", "选中——view2");
-//                            ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_WEB));
-//                        } else if ("C".equals(hotspot.getTag())) {
-//                        } else if ("D".equals(hotspot.getTag())) {
-//                            ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_C));
-////                            getVRLibrary().removePlugins();
-////                            initMenu();
-////                            text.setTextColor(getResources().getColor(R.color.colorPrimary));
+//                                break;
+//                            case "menu2":
+//                                Log.e("click","点击了");
+//                                getVRLibrary().resetEyePick();
+//                                VideoPlayerActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_WEB));
+//                                break;
+//                            case "menu3":
+//                                break;
+//                            case "menu4":
+////                                ExVideoActivity.startVideo(ExMenuActivity.this, Uri.parse(Config.VIDEO_C));
+//                                getVRLibrary().resetEyePick();
+//                                break;
 //                        }
-                    } else {
+//                        Log.e("click", "看中了——view " + hotspot.getTag());
 
+                    clickName=hotspot.getTag();
                         switch (hotspot.getTag()==null?"":hotspot.getTag()) {
-                            case "A":
-                                Log.e("vv","wa___a");
+                            case "menu1":
+                                changeMenu(menu1,"menu1",menu1Position,true);
+                                hideMenu("menu1");
                                 break;
-                            case "B":
+                            case "menu2":
+                                changeMenu(menu2,"menu2",menu2Position,true);
+                                hideMenu("menu2");
+                                break;
+                            case "menu3":
+                                changeMenu(menu3,"menu3",menu3Position,true);
+                                hideMenu("menu3");
+                                break;
+                            case "menu4":
+                                changeMenu(menu4,"menu4",menu4Position,true);
+                                hideMenu("menu4");
                                 break;
                             case "top1":
-                                changeT();
+                                changeTop(top1,"top1",top1Position,true);
+                                hideTop("top1");
+                                break;
+                            case "top2":
+                                changeTop(top2,"top2",top2Position,true);
+                                hideTop("top2");
+                                break;
+                            case "top3":
+                                changeTop(top3,"top3",top3Position,true);
+                                hideTop("top3");
                                 break;
                         }
-                        Log.e("vr", "看中——view " + hotspot.getTag());
+//                        Log.e("click", "正在看——view " + hotspot.getTag());
                         isChangeHover=true;
                         changeHover();
-                    }
                 } else {
-                    Log.e("vr", "看其他位置nothing2");
+//                    Log.e("vr", "看空白位置nothing2");
                     isChangeHover=false;
                     changeHover();
-                    changeTB();
-                    initTime();
-//                    view.setBackgroundResource(R.drawable.img_page);
-//                    poni1.setText("+");
-//                    poni2.setText("+");
-//                    text.setTextColor(getResources().getColor(R.color.colorAccent));
+                    hideMenu("all");
+                    hideTop("all");
 
                 }
                 String text = hotspot == null ? "nop" : String.format(Locale.CHINESE, "%s  %fs", hotspot.getTitle(), (System.currentTimeMillis() - hitTimestamp) / 1000.0f);
@@ -241,135 +247,66 @@ public abstract class ExMenuActivity extends Activity {
             ivRight.setImageResource(R.drawable.ic_hover_normal);
         }
     }
-
-    private boolean isok = false;
-
-//    public void addOne() {
-////        View view = new HoverView(this);
-////        view.setBackgroundColor(0x55FFCC11);
-//        View view = new ImageView(this);
-//        view.setBackgroundResource(R.drawable.img_page);
-//        MDViewBuilder builder = MDViewBuilder.create()
-//                .provider(view, 300/*view width*/, 200/*view height*/)
-//                .size(3, 2)
-//                .position(onePosition)
-//                .title("md view")
-//                .tag("A");
-//
-//        Log.e("getD", onePosition.toString() + "----");
-//        MDAbsView mdView = new MDView(builder);
-//        mdView.rotateToCamera();
-//        plugins.add(mdView);
-//        getVRLibrary().addPlugin(mdView);
-//    }
-//
-//
-//    MDViewBuilder buildertwo;
-//    MDAbsView mdView;
-//    View view;
-//
-//    public void setView(int resid) {
-//        view = new ImageView(this);
-//        view.setBackgroundResource(resid);
-//    }
-//
-//    public void addTwo(int resid) {
-////        setView(R.drawable.img_page);
-//        view = new ImageView(this);
-//        view.setBackgroundResource(resid);
-//            buildertwo = MDViewBuilder.create();
-//            buildertwo.provider(view, 300, 200);
-//            buildertwo.size(3, 2);
-//            buildertwo.position(twoPosition);
-//            buildertwo.title("md view");
-//            buildertwo.tag("B");
-//            mdView = new MDView(buildertwo);
-//            mdView.rotateToCamera();
-//            plugins.add(mdView);
-//            getVRLibrary().addPlugin(mdView);
-//    }
-//
-//    public void addTwo2(int resid) {
-////        setView(R.drawable.img_page);
-//        view = new ImageView(this);
-//        view.setBackgroundResource(resid);
-//
-//        if (buildertwo == null) {
-//            buildertwo = MDViewBuilder.create();
-//            buildertwo.provider(view, 300, 200);
-//            buildertwo.size(3, 2);
-//            buildertwo.position(twoPosition);
-//            buildertwo.title("md view");
-//            buildertwo.tag("B");
-//            isok = true;
-//            mdView = new MDView(buildertwo);
-//            mdView.rotateToCamera();
-//            plugins.add(mdView);
-//            getVRLibrary().addPlugin(mdView);
-//        } else {
-//            if (isok) {
-////                buildertwo.provider(view, 500, 200);
-//                buildertwo.size(7, 3);
-//                Log.e("test", "11111");
-//                getVRLibrary().removePlugin(mdView);
-//                mdView = new MDView(buildertwo);
-//                mdView.rotateToCamera();
-//                plugins.add(mdView);
-//                getVRLibrary().addPlugin(mdView);
-//                isok=false;
-//            } else {
-////                buildertwo.provider(view, 300, 200);
-//                buildertwo.size(3, 2);
-//                Log.e("test", "2222");
-//                getVRLibrary().removePlugin(mdView);
-//                mdView = new MDView(buildertwo);
-//                mdView.rotateToCamera();
-//                plugins.add(mdView);
-//                getVRLibrary().addPlugin(mdView);
-//            }
-//        }
-//    }
-//
-//    public void addThree() {
-////        View view = new HoverView(this);
-////        view.setBackgroundColor(0x55FFCC11);
-//
-//        View view = new ImageView(this);
-//        view.setBackgroundResource(R.drawable.img_page);
-//        MDViewBuilder builder = MDViewBuilder.create()
-//                .provider(view, 300/*view width*/, 200/*view height*/)
-//                .size(3, 2)
-//                .position(threePosition)
-//                .title("md view")
-//                .tag("C");
-//        MDAbsView mdView = new MDView(builder);
-//        mdView.rotateToCamera();
-//        plugins.add(mdView);
-//        getVRLibrary().addPlugin(mdView);
-//    }
-//
-//
-//    public void addFour() {
-//    TextView text;
-//        text = new TextView(this);
-//        text.setBackgroundResource(R.drawable.dome_pic);
-////        text.setText("菜单");
-//        text.setTextColor(getResources().getColor(R.color.colorAccent));
-//        MDViewBuilder builder = MDViewBuilder.create()
-//                .provider(text, 300/*view width*/, 200/*view height*/)
-//                .size(3, 2)
-//                .position(fourPosition)
-//                .title("md view")
-//                .tag("D");
-//        MDAbsView mdView = new MDView(builder);
-//        mdView.rotateToCamera();
-//        plugins.add(mdView);
-//        getVRLibrary().addPlugin(mdView);
-//    }
+    //隐藏非焦点模块菜单
+    private void hideMenu(String menu){
+        switch (menu){
+            case "menu1":
+                changeMenu(menu2,"menu2",menu2Position,false);
+                changeMenu(menu3,"menu3",menu3Position,false);
+                changeMenu(menu4,"menu4",menu4Position,false);
+                break;
+            case "menu2":
+                changeMenu(menu1,"menu1",menu1Position,false);
+                changeMenu(menu3,"menu3",menu3Position,false);
+                changeMenu(menu4,"menu4",menu4Position,false);
+                break;
+            case "menu3":
+                changeMenu(menu1,"menu1",menu1Position,false);
+                changeMenu(menu2,"menu2",menu2Position,false);
+                changeMenu(menu4,"menu4",menu4Position,false);
+                break;
+            case "menu4":
+                changeMenu(menu2,"menu2",menu2Position,false);
+                changeMenu(menu3,"menu3",menu3Position,false);
+                changeMenu(menu1,"menu1",menu1Position,false);
+                break;
+            default:
+                changeMenu(menu1,"menu1",menu1Position,false);
+                changeMenu(menu2,"menu2",menu2Position,false);
+                changeMenu(menu3,"menu3",menu3Position,false);
+                changeMenu(menu4,"menu4",menu4Position,false);
+                break;
+        }
+    }
+    //隐藏非焦点模块菜单
+    private void hideTop(String top){
+        switch (top){
+            case "top1":
+                changeTop(top2,"top2",top2Position,false);
+                changeTop(top3,"top3",top3Position,false);
+                break;
+            case "top2":
+                changeTop(top1,"top1",top1Position,false);
+                changeTop(top3,"top3",top3Position,false);
+                break;
+            case "top3":
+                changeTop(top2,"top2",top2Position,false);
+                changeTop(top1,"top1",top1Position,false);
+                break;
+            default:
+                changeTop(top2,"top2",top2Position,false);
+                changeTop(top3,"top3",top3Position,false);
+                changeTop(top1,"top1",top1Position,false);
+                break;
+        }
+    }
 
     View topLogo,menu1,menu2,menu3;
     TextView menu4;
     TextView text1,text2,text3;
+    TextView top1,top2,top3;
+    TextView tvTime;
+    ImageView imgWifi;
     private void initMenuView(){
 
         topLogo = new ImageView(this);
@@ -389,13 +326,42 @@ public abstract class ExMenuActivity extends Activity {
 //        text.setText("菜单");
 //        menu4.setTextColor(getResources().getColor(R.color.colorAccent));
 
+        top1 = new TextView(this);
+        top1.setText("精选");
+        top1.setTextSize(8);
+        top1.setGravity(Gravity.CENTER_HORIZONTAL);
+        top1.setTextColor(getResources().getColor(R.color.menu_top_nor));
+        top2 = new TextView(this);
+        top2.setText("风景");
+        top2.setTextSize(8);
+        top2.setGravity(Gravity.CENTER_HORIZONTAL);
+        top2.setTextColor(getResources().getColor(R.color.menu_top_nor));
+        top3 = new TextView(this);
+        top3.setText("科技");
+        top3.setTextSize(8);
+        top3.setGravity(Gravity.CENTER_HORIZONTAL);
+        top3.setTextColor(getResources().getColor(R.color.menu_top_nor));
 
+
+        tvTime = new TextView(this);
+//        top1.setBackgroundResource(R.drawable.met);
+        tvTime.setText(TimeUtil.getDateForMenu());
+        tvTime.setTextSize(4);
+        tvTime.setTextColor(getResources().getColor(R.color.menu_top_nor));
+
+        imgWifi = new ImageView(this);
+        imgWifi.setBackgroundResource(R.drawable.wifi);
 
     }
-    public void initMenu(){
-        initMenuTop();
-        initTime();
+
+    /**
+     *
+     * @param isChangePlace 是否更新显示位置，否则只更新内容
+     */
+    public void initMenu(boolean isChangePlace){
         initMenuView();
+        initMenuTop();
+        initToolBar(true);
         //logo
         MDViewBuilder builderLoge = MDViewBuilder.create()
                 .provider(topLogo, 60, 60)
@@ -408,101 +374,55 @@ public abstract class ExMenuActivity extends Activity {
         MDViewBuilder builder1 = MDViewBuilder.create()
                 .provider(menu1, 300/*view width*/, 200/*view height*/)
                 .size(3, 3)
-                .position(onePosition)
-                .title("md view")
-                .tag("A");
+                .position(menu1Position)
+                .title("menu1")
+                .tag("menu1")
+                .listenClick(new MDVRLibrary.ITouchPickListener() {
+                    @Override
+                    public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+                        Log.e("viewclick","viewClick");
+                    }
+                });
         MDAbsView mdView1 = new MDView(builder1);
         //菜单二
         MDViewBuilder builder2 = MDViewBuilder.create();
         builder2.provider(menu2, 300, 200);
         builder2.size(3, 3);
-        builder2.position(twoPosition);
-        builder2.title("md view");
-        builder2.tag("B");
+        builder2.position(menu2Position);
+        builder2.title("menu2");
+        builder2.tag("menu2");
+
+        builder2.listenClick(new MDVRLibrary.ITouchPickListener() {
+            @Override
+            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+                Log.e("clck","----------click2");
+            }
+        });
         MDAbsView mdView2 = new MDView(builder2);
         //菜单三
         MDViewBuilder builder3 = MDViewBuilder.create()
                 .provider(menu3, 300/*view width*/, 200/*view height*/)
                 .size(3, 3)
-                .position(threePosition)
-                .title("md view")
-                .tag("C");
+                .position(menu3Position)
+                .title("menu3")
+                .tag("menu3");
         MDAbsView mdView3 = new MDView(builder3);
         //菜单四
         MDViewBuilder builder4 = MDViewBuilder.create()
                 .provider(menu4, 300/*view width*/, 200/*view height*/)
                 .size(3, 3)
-                .position(fourPosition)
-                .title("md view")
-                .tag("D");
+                .position(menu4Position)
+                .title("menu4")
+                .tag("menu4");
         MDAbsView mdView4 = new MDView(builder4);
 
-        mdViewLogo.rotateToCamera();
-        mdView1.rotateToCamera();
-        mdView2.rotateToCamera();
-        mdView3.rotateToCamera();
-        mdView4.rotateToCamera();
-
-        plugins.add(mdViewLogo);
-        plugins.add(mdView1);
-        plugins.add(mdView2);
-        plugins.add(mdView3);
-        plugins.add(mdView4);
-        getVRLibrary().addPlugin(mdViewLogo);
-        getVRLibrary().addPlugin(mdView1);
-        getVRLibrary().addPlugin(mdView2);
-        getVRLibrary().addPlugin(mdView3);
-        getVRLibrary().addPlugin(mdView4);
-    }
-    public void initMenu2(){
-        initMenuView();
-        //logo
-        MDViewBuilder builderLoge = MDViewBuilder.create()
-                .provider(topLogo, 60, 60)
-                .size(1, 1)
-                .position(topLogoPosition)
-                .title("md view")
-                .tag("Logo");
-        MDAbsView mdViewLogo = new MDView(builderLoge);
-        //菜单一
-        MDViewBuilder builder1 = MDViewBuilder.create()
-                .provider(menu1, 300/*view width*/, 200/*view height*/)
-                .size(3, 2)
-                .position(onePosition)
-                .title("md view")
-                .tag("A");
-        MDAbsView mdView1 = new MDView(builder1);
-        //菜单二
-        MDViewBuilder builder2 = MDViewBuilder.create();
-        builder2.provider(menu2, 300, 200);
-        builder2.size(3, 2);
-        builder2.position(twoPosition);
-        builder2.title("md view");
-        builder2.tag("B");
-        MDAbsView mdView2 = new MDView(builder2);
-        //菜单三
-        MDViewBuilder builder3 = MDViewBuilder.create()
-                .provider(menu3, 300/*view width*/, 200/*view height*/)
-                .size(3, 2)
-                .position(threePosition)
-                .title("md view")
-                .tag("C");
-        MDAbsView mdView3 = new MDView(builder3);
-        //菜单四
-        MDViewBuilder builder4 = MDViewBuilder.create()
-                .provider(menu4, 300/*view width*/, 200/*view height*/)
-                .size(3, 2)
-                .position(fourPosition)
-                .title("md view")
-                .tag("D");
-        MDAbsView mdView4 = new MDView(builder4);
-
-//        mdViewLogo.rotateToCamera();
-//        mdView1.rotateToCamera();
-//        mdView2.rotateToCamera();
-//        mdView3.rotateToCamera();
-//        mdView4.rotateToCamera();
-
+        if (isChangePlace){
+            mdViewLogo.rotateToCamera();
+            mdView1.rotateToCamera();
+            mdView2.rotateToCamera();
+            mdView3.rotateToCamera();
+            mdView4.rotateToCamera();
+        }
         plugins.add(mdViewLogo);
         plugins.add(mdView1);
         plugins.add(mdView2);
@@ -515,43 +435,27 @@ public abstract class ExMenuActivity extends Activity {
         getVRLibrary().addPlugin(mdView4);
     }
 
-    TextView top1,top2,top3;
     public void initMenuTop(){
-        top1 = new TextView(this);
-//        top1.setBackgroundResource(R.drawable.met);
-        top1.setText("精选");
-        top1.setTextSize(10);
-        top1.setTextColor(getResources().getColor(R.color.menu_top_nor));
-        top2 = new TextView(this);
-//        top2.setBackgroundResource(R.drawable.met);
-        top2.setText("风景");
-        top2.setTextSize(10);
-        top2.setTextColor(getResources().getColor(R.color.menu_top_nor));
-        top3 = new TextView(this);
-//        top3.setBackgroundResource(R.drawable.met);
-        top3.setText("科技");
-        top3.setTextSize(10);
-        top3.setTextColor(getResources().getColor(R.color.menu_top_nor));
         //菜单一
         MDViewBuilder topBuild1 = MDViewBuilder.create()
-                .provider(top1, 90, 60)
-                .size(1, 1)
+                .provider(top1, 80, 50)
+                .size(1, 0.80f)
                 .position(top1Position)
                 .title("top1")
                 .tag("top1");
         MDAbsView mdViewTop1 = new MDView(topBuild1);
         //菜单二
         MDViewBuilder topBuild2 = MDViewBuilder.create()
-                .provider(top2, 90, 60)
-                .size(1, 1)
+                .provider(top2, 80, 50)
+                .size(1, 0.80f)
                 .position(top2Position)
                 .title("top2")
                 .tag("top2");
         MDAbsView mdViewTop2 = new MDView(topBuild2);
         //菜单三
         MDViewBuilder topBuild3 = MDViewBuilder.create();
-        topBuild3.provider(top3, 90, 60);
-        topBuild3.size(1, 1);
+        topBuild3.provider(top3, 80, 50);
+        topBuild3.size(1, 0.80f);
         topBuild3.position(top3Position);
         topBuild3.title("top3");
         topBuild3.tag("top3");
@@ -568,64 +472,387 @@ public abstract class ExMenuActivity extends Activity {
         getVRLibrary().addPlugin(mdViewTop2);
         getVRLibrary().addPlugin(mdViewTop3);
     }
-    TextView tvTime;
-    private void initTime(){
-        tvTime = new TextView(this);
-//        top1.setBackgroundResource(R.drawable.met);
-        tvTime.setText("12:00");
-        tvTime.setTextSize(15);
-        tvTime.setTextColor(getResources().getColor(R.color.menu_top_nor));
+    private void initToolBar(boolean isChangePlace){
+        tvTime.setText(TimeUtil.getDateForMenu());
         //菜单一
         MDViewBuilder topBuild1 = MDViewBuilder.create()
-                .provider(tvTime, 80, 30)
-                .size(1, 1)
+                .provider(tvTime, 70, 18)
+                .size(1, 0.35f)
                 .position(topTimePosition)
                 .title("toptime")
                 .tag("toptime");
         MDAbsView mdViewTopTime = new MDView(topBuild1);
         plugins.add(mdViewTopTime);
+        if (isChangePlace){
+            mdViewTopTime.rotateToCamera();
+        }
         getVRLibrary().addPlugin(mdViewTopTime);
-    }
-
-    private void changeT(){
-        top1 = new TextView(this);
-//        top1.setBackgroundResource(R.drawable.met);
-        top1.setText("精选");
-        top1.setTextSize(10);
-        top1.setTextColor(getResources().getColor(R.color.colorAccent));
         //菜单一
-        MDViewBuilder topBuild1 = MDViewBuilder.create()
-                .provider(top1, 90, 60)
-                .size(1, 1)
-                .position(top1Position)
-                .title("top1c")
-                .tag("top1c");
-        MDAbsView mdViewTop1 = new MDView(topBuild1);
-        plugins.add(mdViewTop1);
-
-//        getVRLibrary().removePlugin(getVRLibrary().findViewByTag("top1"));
-        getVRLibrary().addPlugin(mdViewTop1);
-    }
-    private void changeTB(){
-        top1 = new TextView(this);
-//        top1.setBackgroundResource(R.drawable.met);
-        top1.setText("精选");
-        top1.setTextSize(10);
-        top1.setTextColor(getResources().getColor(R.color.menu_top_nor));
-        //菜单一
-        MDViewBuilder topBuild1 = MDViewBuilder.create()
-                .provider(top1, 90, 60)
-                .size(1, 1)
-                .position(top1Position)
-                .title("top1")
-                .tag("top1");
-        MDAbsView mdViewTop1 = new MDView(topBuild1);
-        plugins.add(mdViewTop1);
-        getVRLibrary().removePlugin(getVRLibrary().findViewByTag("top1c"));
-        getVRLibrary().addPlugin(mdViewTop1);
+        MDViewBuilder topwifi = MDViewBuilder.create()
+                .provider(imgWifi, 50, 50)
+                .size(0.35f, 0.35f)
+                .position(topWifiPosition)
+                .title("topwifi")
+                .tag("topwifi");
+        MDAbsView mdViewTopWifi = new MDView(topwifi);
+        plugins.add(mdViewTopWifi);
+        if (isChangePlace){
+            mdViewTopWifi.rotateToCamera();
+        }
+        getVRLibrary().addPlugin(mdViewTopWifi);
     }
 
+    private Runnable updataTimeRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.e("updata","updata time ");
+            initToolBar(false);
+            handler.postDelayed(updataTimeRunnable,30000);
+        }
+    };
 
+    private boolean toChangeBack=true;
+    private boolean toChange=true;
+    private boolean toChangeBack2=true;
+    private boolean toChange2=true;
+    private boolean toChangeBack3=true;
+    private boolean toChange3=true;
+
+    /**
+     *
+     * @param view 传入的顶部选项view
+     * @param viewName  顶部选项view的tag
+     * @param position  坐标信息
+     * @param change 是否改变状态
+     */
+    private void changeTop(TextView view,String viewName,MDPosition position,boolean change){
+        if (view==null){
+            Log.e("view","textView更新");
+            view=new TextView(this);
+        }
+        if (change){
+            //改变状态
+            switch (viewName){
+                case "top1":
+                    if (toChange){
+                        toChange=false;
+                        toChangeBack=true;
+                        Log.e("view","更新");
+                        view.setText("精选");
+//                        view.setTextSize(10);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_pass));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1.2f, 1.0f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "top2":
+                    if (toChange2){
+                        toChange2=false;
+                        toChangeBack2=true;
+                        Log.e("view","更新");
+                        view.setText("风景");
+//                        view.setTextSize(10);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_pass));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1.2f, 1.0f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "top3":
+                    if (toChange3){
+                        toChange3=false;
+                        toChangeBack3=true;
+                        Log.e("view","更新");
+                        view.setText("科技");
+//                        view.setTextSize(10);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_pass));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1.2f, 1.0f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+            }
+
+        }else{
+            //还原初始状态
+            switch (viewName){
+                case "top1":
+                    if (toChangeBack){
+                        toChangeBack=false;
+                        toChange=true;
+                        Log.e("view","还原更新");
+                        view.setText("精选");
+//                        view.setTextSize(8);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_nor));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1, 0.80f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "top2":
+                    if (toChangeBack2){
+                        toChangeBack2=false;
+                        toChange2=true;
+                        Log.e("view","还原更新");
+                        view.setText("风景");
+//                        view.setTextSize(8);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_nor));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1, 0.80f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "top3":
+                    if (toChangeBack3){
+                        toChangeBack3=false;
+                        toChange3=true;
+                        Log.e("view","还原更新");
+                        view.setText("科技");
+//                        view.setTextSize(8);
+                        view.setTextColor(getResources().getColor(R.color.menu_top_nor));
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 80, 50)
+                                .size(1, 0.80f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+            }
+
+        }
+    }
+    /**
+     *
+     * @param change 当1 时，改变，0 时还原
+     */
+    private boolean toChangeMenu1=true;
+    private boolean toChangeMenuBack1=true;
+    private boolean toChangeMenu2=true;
+    private boolean toChangeMenuBack2=true;
+    private boolean toChangeMenu3=true;
+    private boolean toChangeMenuBack3=true;
+    private boolean toChangeMenu4=true;
+    private boolean toChangeMenuBack4=true;
+    private MDViewBuilder menuBuilder;
+    private void changeMenu(View view,String viewName,MDPosition position,boolean change){
+        if (view==null){
+            view = new ImageView(this);
+            view.setBackgroundResource(R.drawable.img_page);
+        }
+        if (change){
+            switch (viewName){
+                case "menu1":
+                    if (toChangeMenu1){
+                        toChangeMenu1=false;
+                        toChangeMenuBack1=true;
+                        Log.e("view","更新");
+//                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3.5f, 3.5f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+
+                    }
+                    break;
+                case "menu2":
+                    if (toChangeMenu2){
+                        toChangeMenu2=false;
+                        toChangeMenuBack2=true;
+                        Log.e("view","更新");
+//                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3.5f, 3.5f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change")
+                                .listenClick(new MDVRLibrary.ITouchPickListener() {
+                                    @Override
+                                    public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+                                        Log.e("clck","----------click2");
+                                    }
+                                });
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "menu3":
+                    if (toChangeMenu3){
+                        toChangeMenu3=false;
+                        toChangeMenuBack3=true;
+                        Log.e("view","更新");
+//                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3.5f, 3.5f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "menu4":
+                    if (toChangeMenu4){
+                        toChangeMenu4=false;
+                        toChangeMenuBack4=true;
+                        Log.e("view","更新");
+//                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3.5f, 3.5f)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName+"change");
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+            }
+        }else{
+            switch (viewName){
+                case "menu1":
+                    if (toChangeMenuBack1){
+                        toChangeMenuBack1=false;
+                        toChangeMenu1=true;
+                        Log.e("view","还原更新");
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3, 3)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+
+                    }
+                    break;
+                case "menu2":
+                    if (toChangeMenuBack2){
+                        toChangeMenuBack2=false;
+                        toChangeMenu2=true;
+                        Log.e("view","还原更新");
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3, 3)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName)
+                                .listenClick(new MDVRLibrary.ITouchPickListener() {
+                                    @Override
+                                    public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+                                        Log.e("clck","----------click2");
+                                    }
+                                });
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "menu3":
+                    if (toChangeMenuBack3){
+                        toChangeMenuBack3=false;
+                        toChangeMenu3=true;
+                        Log.e("view","还原更新");
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3, 3)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+                case "menu4":
+                    if (toChangeMenuBack4){
+                        toChangeMenuBack4=false;
+                        toChangeMenu4=true;
+                        Log.e("view","还原更新");
+                        getVRLibrary().removePlugin(getVRLibrary().findViewByTag(viewName+"change"));
+                        //菜单一
+                        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                                .provider(view, 300/*view width*/, 200/*view height*/)
+                                .size(3, 3)
+                                .position(position)
+                                .title(viewName)
+                                .tag(viewName);
+                        MDAbsView mdViewTop1 = new MDView(topBuild1);
+                        plugins.add(mdViewTop1);
+                        getVRLibrary().addPlugin(mdViewTop1);
+                    }
+                    break;
+            }
+        }
+    }
 
 
 
@@ -659,17 +886,17 @@ public abstract class ExMenuActivity extends Activity {
     }
 
 
-    private boolean isGoVideo=true;
     @Override
     protected void onResume() {
         super.onResume();
-        isGoVideo=true;
+        handler.postDelayed(updataTimeRunnable,1000);
         mVRLibrary.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        handler.removeCallbacks(updataTimeRunnable);
         mVRLibrary.onPause(this);
     }
 

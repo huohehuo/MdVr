@@ -7,6 +7,7 @@
     <color name="button_pressed">#AA000000</color>
 
 
-    <color name="menu_top_nor">#aaedecec</color>
+    <color name="menu_top_nor">#f9e9e7e7</color>
+    <color name="menu_top_pass">#f4903f</color>
 
 </resources>

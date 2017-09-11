@@ -1,7 +1,11 @@
 package quseit.amd360;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.Toast;
@@ -23,14 +27,20 @@ public class VideoPlayerActivity extends ExVideoActivity {
     private static final String TAG = "VideoPlayerActivity";
     private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
 
-
+    public static void startVideo(Context context, Uri uri){
+        start(context, uri, VideoPlayerActivity.class);
+    }
+    private static void start(Context context, Uri uri, Class<? extends Activity> clz){
+        Intent i = new Intent(context,clz);
+        i.setData(uri);
+        context.startActivity(i);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMediaPlayerWrapper.init();
 
-        backBtn();
-//        playBtn();
+        initMenu();
 
         mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
@@ -76,7 +86,13 @@ public class VideoPlayerActivity extends ExVideoActivity {
 //        });
 
     }
-
+    protected Uri getUri() {
+        Intent i = getIntent();
+        if (i == null || i.getData() == null){
+            return null;
+        }
+        return i.getData();
+    }
     @Override
     protected MDVRLibrary createVRLibrary() {
         return MDVRLibrary.with(this)
@@ -114,6 +130,7 @@ public class VideoPlayerActivity extends ExVideoActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.e("click","vplayer destroy");
         mMediaPlayerWrapper.destroy();
     }
 
