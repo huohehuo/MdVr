@@ -19,24 +19,53 @@ import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
  * status
  */
 public class MediaPlayerWrapper implements IMediaPlayer.OnPreparedListener {
+    private VideoStateIO videoStateIO;
     protected IMediaPlayer mPlayer;
     private IjkMediaPlayer.OnPreparedListener mPreparedListener;
-    private static final int STATUS_IDLE = 0;
-    private static final int STATUS_PREPARING = 1;
-    private static final int STATUS_PREPARED = 2;
-    private static final int STATUS_STARTED = 3;
-    private static final int STATUS_PAUSED = 4;
-    private static final int STATUS_STOPPED = 5;
-    private int mStatus = STATUS_IDLE;
+    public static final int STATUS_IDLE = 0;
+    public static final int STATUS_PREPARING = 1;
+    public static final int STATUS_PREPARED = 2;
+    public static final int STATUS_STARTED = 3;
+    public static final int STATUS_PAUSED = 4;
+    public static final int STATUS_STOPPED = 5;
+    public int mStatus = STATUS_IDLE;
 
-    public void init(){
+    public void init(final VideoStateIO videoStateIO){
+        this.videoStateIO = videoStateIO;
         mStatus = STATUS_IDLE;
         mPlayer = new IjkMediaPlayer();
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
             @Override
             public boolean onInfo(IMediaPlayer mp, int what, int extra) {
+
+//                App.e("setOnInfoListener_check"+mp.getMediaInfo().mMeta);
+//                Log.e("setOnInfoListener","get:"+mp.getMediaInfo().mMeta.mFormat);
+//                Log.e("setOnInfoListener","get:"+mp.getMediaInfo().mMeta.mAudioStream.mTbrNum);
+//                Log.e("setOnInfoListener","get:"+mp.getMediaInfo().mMeta.mVideoStream.getFpsInline());
+//                Log.e("setOnInfoListener","get:"+mp.getMediaInfo().mMeta.mVideoStream.getBitrateInline());
                 return false;
+            }
+        });
+
+        //当为网络视频时，会有监听，若是本地则为0
+        mPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
+//                App.e(""+i);
+            }
+        });
+        mPlayer.setOnSeekCompleteListener(new IMediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(IMediaPlayer iMediaPlayer) {
+                App.e("seek",iMediaPlayer.getVideoSarDen()+"");
+            }
+        });
+        //播放完毕后
+        mPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(IMediaPlayer iMediaPlayer) {
+                videoStateIO.endVideo();
             }
         });
 
@@ -122,7 +151,7 @@ public class MediaPlayerWrapper implements IMediaPlayer.OnPreparedListener {
         }
     }
 
-    private void start(){
+    public void start(){
         if (mPlayer == null) return;
         if (mStatus == STATUS_PREPARED || mStatus == STATUS_PAUSED){
             mPlayer.start();

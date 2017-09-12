@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.asha.vrlib.MDVRLibrary;
 import com.asha.vrlib.model.MDPosition;
@@ -39,10 +40,11 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
  * Created by hzqiujiadi on 16/1/22.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public abstract class ExVideoActivity extends Activity {
+public abstract class ExVideoActivity extends Activity{
 
     private static final String TAG = "ExVideoActivity";
-
+    ImageView ivLeft;
+    ImageView ivRight;
 //    public static void startVideo(Context context, Uri uri){
 //        start(context, uri, VideoPlayerActivity.class);
 //    }
@@ -56,17 +58,18 @@ public abstract class ExVideoActivity extends Activity {
 
     // load resource from android drawable and remote url.
     private MDVRLibrary.IImageLoadProvider mImageLoadProvider = new ImageLoadProvider();
-
+    public MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
     // load resource from android drawable only.
     private MDVRLibrary.IImageLoadProvider mAndroidProvider = new AndroidProvider(this);
 
     private List<MDAbsPlugin> plugins = new LinkedList<>();
 
     private MDPosition logoPosition = MDMutablePosition.newInstance().setY(-8.0f).setYaw(-90.0f);
-    private MDPosition backPosition = MDPosition.newInstance().setZ(-8.0f).setX(-1.6f).setY(-5.0f).setYaw(-45.0f);
-    private MDPosition playPosition = MDPosition.newInstance().setZ(-8.0f).setX(-0.6f).setY(-5.0f).setYaw(-45.0f);
-
-//    private MDPosition[] positions = new MDPosition[]{
+    private MDPosition backPosition = MDPosition.newInstance().setZ(-8.0f).setX(-3.8f).setY(-5.0f).setYaw(-45.0f);
+    private MDPosition playPosition = MDPosition.newInstance().setZ(-8.0f).setX(-2.0f).setY(-5.0f).setYaw(-45.0f);
+    private MDPosition videoTimePosition = MDPosition.newInstance().setZ(-8.0f).setX(-0.8f).setY(-5.0f).setYaw(-45.0f);
+    private MDPosition backgroundPosition = MDPosition.newInstance().setZ(-8.0f).setX(0.0f).setY(-5.0f).setYaw(-45.0f);
+    //    private MDPosition[] positions = new MDPosition[]{
 //            MDPosition.newInstance().setZ(-8.0f).setYaw(-45.0f),
 //            MDPosition.newInstance().setZ(-18.0f).setYaw(15.0f).setAngleX(15),
 //            MDPosition.newInstance().setZ(-10.0f).setYaw(-10.0f).setAngleX(-15),
@@ -77,7 +80,10 @@ public abstract class ExVideoActivity extends Activity {
 //            MDPosition.newInstance().setZ(-3.0f).setYaw(15.0f).setAngleX(-45).setAngleY(45),
 //            MDPosition.newInstance().setZ(-3.0f).setYaw(0.0f).setAngleX(90),
 //    };
+
     private String clickName="";
+    private String videoLength="";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +98,6 @@ public abstract class ExVideoActivity extends Activity {
         mVRLibrary = createVRLibrary();
 
 
-        Log.e("vido","asdff");
         final Activity activity = this;
 
         final List<View> hotspotPoints = new LinkedList<>();
@@ -109,6 +114,7 @@ public abstract class ExVideoActivity extends Activity {
                         break;
                     case "ivPlay":
                         Log.e("play","click play");
+                        playVideo(mMediaPlayerWrapper);
                         break;
                 }
             }
@@ -123,24 +129,32 @@ public abstract class ExVideoActivity extends Activity {
             }
         });
 
-
+        ivLeft = (ImageView) findViewById(R.id.iv_hover_video_left);
+        ivRight = (ImageView) findViewById(R.id.iv_hover_video_right);
         getVRLibrary().setEyePickChangedListener(new MDVRLibrary.IEyePickListener() {
             @Override
             public void onHotspotHit(IMDHotspot hotspot, long hitTimestamp) {
-                if (hotspot!=null){
+                if (hotspot != null) {
 //                    if (System.currentTimeMillis() - hitTimestamp > 1000)
-                    clickName=hotspot.getTag();
-                 switch (hotspot.getTag()==null?"":hotspot.getTag()) {
-                            case "ivClose":
+                    clickName = hotspot.getTag();
+                    switch (hotspot.getTag() == null ? "" : hotspot.getTag()) {
+                        case "ivClose":
 
-                                break;
-                            case "ivPlay":
-                                playBtn(true);
-                                break;
-                        }
+                            break;
+                        case "ivPlay":
 
-                        Log.e("vr","nothing2");
-                        playBtn(false);
+                            break;
+                    }
+//                    Log.e("click", "正在看——view " + hotspot.getTag());
+                    isChangeHover=true;
+                    changeHover();
+                } else {
+                    clickName = "";
+//                    Log.e("vr", "nothing2");
+                    isChangeHover=false;
+                    changeHover();
+
+
                 }
 
             }
@@ -148,8 +162,49 @@ public abstract class ExVideoActivity extends Activity {
 
 
     }
+    //播放按钮的控制及状态
+    private boolean isPlay=true;
+    //用于设置播放完毕后的状态值
+    public boolean isAutoPlay=false;
+    private void playVideo(MediaPlayerWrapper playerWrapper){
+        //当播放完毕时，再次点击播放按钮将会重新播放
+        if (isAutoPlay){
+            playerWrapper.stop();
+            playerWrapper.prepare();
+            playBtn(false);
+            isPlay=false;
+            isAutoPlay=false;
+            return;
+        }
+        //当视频处于播放状态时，转变成暂停状态
+        if (isPlay){
+            playerWrapper.pause();
+            playBtn(true);
+            isPlay=false;
+        }else{
+            //当视频处于暂停状态时，转变成播放状态
+            playerWrapper.start();
+            playBtn(false);
+            isPlay=true;
+        }
+    }
+    private boolean isChangeHover=true;
+    //改变中心焦点图标
+    private void changeHover(){
+        if (isChangeHover){
+            ivLeft.setImageResource(R.drawable.ic_hover_selected);
+            ivRight.setImageResource(R.drawable.ic_hover_selected);
+        }else{
+            ivLeft.setImageResource(R.drawable.ic_hover_normal);
+//            ivLeft.setAlpha(0.5f);
+            ivRight.setImageResource(R.drawable.ic_hover_normal);
+//            ivRight.setAlpha(0.5f);
+        }
+    }
 
     //初始化页面模块
+    private TextView tvTime,ivBg;
+    private ImageView ivPlay,ivClose;
     public void initMenu(){
         //关闭按钮
         ivClose = new ImageView(this);
@@ -162,7 +217,16 @@ public abstract class ExVideoActivity extends Activity {
                 .tag("ivClose")
                 ;
         MDAbsView mdView = new MDView(builder);
-
+        //灰色背景
+        ivBg = new TextView(this);
+        ivBg.setBackgroundColor(getResources().getColor(R.color.video_toolbar_bg));
+        MDViewBuilder builderbg = MDViewBuilder.create()
+                .provider(ivBg, 100/*view width*/, 150/*view height*/)
+                .size(6, 1.2f)
+                .position(backgroundPosition)
+                .title("ivbg")
+                .tag("ivbg");
+        MDAbsView mdViewbg = new MDView(builderbg);
         //播放按钮
         ivPlay=new ImageView(this);
         ivPlay.setBackgroundResource(R.drawable.ic_pause);
@@ -174,76 +238,115 @@ public abstract class ExVideoActivity extends Activity {
                 .tag("ivPlay")
                 ;
         MDAbsView mdView2 = new MDView(builderPlay);
+
+        //视频进度条显示
+        tvTime = new TextView(this);
+//        top1.setBackgroundResource(R.drawable.met);
+        tvTime.setText(videoLength);
+        tvTime.setTextSize(4);
+        tvTime.setTextColor(getResources().getColor(R.color.menu_top_nor));
+        //菜单一
+        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                .provider(tvTime, 70, 18)
+                .size(1, 0.35f)
+                .position(videoTimePosition)
+                .title("videotime")
+                .tag("videotime");
+        MDAbsView mdViewVideoTime = new MDView(topBuild1);
+
+
         mdView.rotateToCamera();
+        mdViewbg.rotateToCamera();
         mdView2.rotateToCamera();
+        mdViewVideoTime.rotateToCamera();
+
         plugins.add(mdView);
+        plugins.add(mdViewbg);
         plugins.add(mdView2);
+        plugins.add(mdViewVideoTime);
+
         getVRLibrary().addPlugin(mdView);
+        getVRLibrary().addPlugin(mdViewbg);
         getVRLibrary().addPlugin(mdView2);
+        getVRLibrary().addPlugin(mdViewVideoTime);
     }
 
-    private View ivPlay,ivClose;
+
+    private boolean toChange=true;
+    private boolean toChangeBack=true;
     public void playBtn(boolean change){
         if (ivPlay==null){
-            Log.e("view","textView更新");
+//            Log.e("view","textView更新");
             ivPlay=new ImageView(this);
             ivPlay.setBackgroundResource(R.drawable.ic_pause);
         }
         if (change){
-            //暂停播放
-            ivPlay.setBackgroundResource(R.drawable.ic_play);
-            MDViewBuilder builder = MDViewBuilder.create()
-                    .provider(ivPlay, 100/*view width*/, 100/*view height*/)
-                    .size(1, 1)
-                    .position(playPosition)
-                    .title("ivPlay")
-                    .tag("ivPlay")
-                    ;
-            MDAbsView mdView = new MDView(builder);
-            plugins.add(mdView);
-            getVRLibrary().addPlugin(mdView);
+            if (toChange){
+                toChange=false;
+                toChangeBack=true;
+                //暂停播放
+                ivPlay.setBackgroundResource(R.drawable.ic_play);
+  //            getVRLibrary().removePlugin(getVRLibrary().findViewByTag("ivPlay"));
+                MDViewBuilder builder = MDViewBuilder.create()
+                        .provider(ivPlay, 100/*view width*/, 100/*view height*/)
+                        .size(1, 1)
+                        .position(playPosition)
+                        .title("ivPlay")
+                        .tag("ivPlay")
+                        ;
+                MDAbsView mdView = new MDView(builder);
+                plugins.add(mdView);
+                getVRLibrary().addPlugin(mdView);
+            }
+
         }else{
-            ivPlay.setBackgroundResource(R.drawable.ic_pause);
-//            getVRLibrary().removePlugin(getVRLibrary().findViewByTag("ivPlaying"));
-            MDViewBuilder builder = MDViewBuilder.create()
-                    .provider(ivPlay, 100/*view width*/, 100/*view height*/)
-                    .size(1, 1)
-                    .position(playPosition)
-                    .title("ivPlay")
-                    .tag("ivPlay")
-                    ;
-            MDAbsView mdView = new MDView(builder);
-            plugins.add(mdView);
-            getVRLibrary().addPlugin(mdView);
+            if (toChangeBack){
+                toChangeBack=false;
+                toChange=true;
+                ivPlay.setBackgroundResource(R.drawable.ic_pause);
+//                getVRLibrary().removePlugin(getVRLibrary().findViewByTag("ivPlay"));
+                MDViewBuilder builder = MDViewBuilder.create()
+                        .provider(ivPlay, 100/*view width*/, 100/*view height*/)
+                        .size(1, 1)
+                        .position(playPosition)
+                        .title("ivPlay")
+                        .tag("ivPlay")
+                        ;
+                MDAbsView mdView = new MDView(builder);
+                plugins.add(mdView);
+                getVRLibrary().addPlugin(mdView);
+            }
+
         }
 
 
     }
+    public void setVideoSize(boolean isChangePlace,String videoLength){
+        this.videoLength=videoLength;
+        if (tvTime==null){
+            tvTime = new TextView(this);
+//        top1.setBackgroundResource(R.drawable.met);
+            tvTime.setText(videoLength);
+            tvTime.setTextSize(4);
+            tvTime.setTextColor(getResources().getColor(R.color.menu_top_nor));
+        }
+        //菜单一
+        tvTime.setText(videoLength);
+//        getVRLibrary().removePlugin(getVRLibrary().findViewByTag("videotime"));
+        MDViewBuilder topBuild1 = MDViewBuilder.create()
+                .provider(tvTime, 70, 18)
+                .size(1, 0.35f)
+                .position(videoTimePosition)
+                .title("videotime")
+                .tag("videotime");
+        MDAbsView mdViewTopTime = new MDView(topBuild1);
+        plugins.add(mdViewTopTime);
+        if (isChangePlace){
+            mdViewTopTime.rotateToCamera();
+        }
+        getVRLibrary().addPlugin(mdViewTopTime);
+    }
 
-//    MDViewBuilder builder;
-//    MDAbsView mdView;
-//    View view;
-//    public void addTwo(int width,int height){
-//        view = new ImageView(this);
-//        view.setBackgroundResource(R.drawable.img_page);
-//        builder = MDViewBuilder.create()
-//                .provider(view, width, height)
-//                .size(3, 2)
-//                .position(MDPosition.newInstance().setZ(-8.0f).setX(1.6f))
-//                .title("md view")
-//                .tag("B")
-//                ;
-////        builder.listenClick(new MDVRLibrary.ITouchPickListener() {
-////            @Override
-////            public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
-////                Log.e("vr","two_listenclick....");
-////            }
-////        });
-//        mdView = new MDView(builder);
-//        mdView.rotateToCamera();
-//        plugins.add(mdView);
-//        getVRLibrary().addPlugin(mdView);
-//    }
 
     abstract protected MDVRLibrary createVRLibrary();
 
@@ -266,7 +369,6 @@ public abstract class ExVideoActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("click","video destory");
         mVRLibrary.onDestroy();
     }
 

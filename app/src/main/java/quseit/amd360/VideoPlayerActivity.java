@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.Toast;
@@ -22,10 +21,10 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public class VideoPlayerActivity extends ExVideoActivity {
+public class VideoPlayerActivity extends ExVideoActivity implements VideoStateIO{
 
     private static final String TAG = "VideoPlayerActivity";
-    private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
+//    private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
 
     public static void startVideo(Context context, Uri uri){
         start(context, uri, VideoPlayerActivity.class);
@@ -38,14 +37,15 @@ public class VideoPlayerActivity extends ExVideoActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMediaPlayerWrapper.init();
-
+        mMediaPlayerWrapper.init(this);
         initMenu();
 
         mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer mp) {
                 cancelBusy();
+                setVideoSize(false,mp.getMediaInfo().mMeta.getDurationInline());
+//                Log.e("getMp",mp.getMediaInfo().mMeta.getDurationInline());
                 if (getVRLibrary() != null){
                     getVRLibrary().notifyPlayerChanged();
                 }
@@ -56,7 +56,9 @@ public class VideoPlayerActivity extends ExVideoActivity {
             @Override
             public boolean onError(IMediaPlayer mp, int what, int extra) {
                 String error = String.format("Play Error what=%d extra=%d",what,extra);
+                App.e("出现不可抗力因素");
                 Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_SHORT).show();
+                finish();
                 return true;
             }
         });
@@ -130,7 +132,6 @@ public class VideoPlayerActivity extends ExVideoActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("click","vplayer destroy");
         mMediaPlayerWrapper.destroy();
     }
 
@@ -162,4 +163,11 @@ public class VideoPlayerActivity extends ExVideoActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void endVideo() {
+        //设置为true通知为下次点击播放按钮会重新播放
+        isAutoPlay=true;
+        //设置按钮为暂停状态
+        playBtn(true);
+    }
 }

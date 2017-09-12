@@ -63,8 +63,7 @@ public class BitmapPlayerActivityEx extends ExMenuActivity {
         mTarget = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Log.d(TAG, "loaded image, size:" + bitmap.getWidth() + "," + bitmap.getHeight());
-
+                App.e( "loaded image, size:" + bitmap.getWidth() + "," + bitmap.getHeight());
                 // notify if size changed
                 getVRLibrary().onTextureResize(bitmap.getWidth(), bitmap.getHeight());
 

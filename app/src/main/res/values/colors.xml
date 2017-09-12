@@ -9,5 +9,11 @@
 
     <color name="menu_top_nor">#f9e9e7e7</color>
     <color name="menu_top_pass">#f4903f</color>
+    <color name="video_toolbar_bg">#dc706f6e</color>
+
+    <color name="vrblack">#060606</color>
+    <color name="vrwhile">#f1ffffff</color>
+    <color name="vrgray">#585857</color>
+
 
 </resources>
