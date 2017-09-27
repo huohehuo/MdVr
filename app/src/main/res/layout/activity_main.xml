@@ -3,28 +3,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="quseit.amd360.MainActivity">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iv_close"
         android:layout_margin="20dp"
         android:src="@drawable/ic_close"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+    <TextView
+        android:textColor="#FF9B9B9B"
+        android:text="关于"
+        android:gravity="center"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/tv_about"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp" />
+    <TextView
+        android:layout_below="@+id/iv"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:textColor="#FF9B9B9B"
+        android:text="请将手机放入VR设备中开始使用"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:src="@drawable/img_quseit_logo"
+
+        android:layout_width="80dp"
+        android:layout_height="22dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:id="@+id/imageView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GoSpark VR"
+        android:textColor="#FF4A4A4A"
+        android:textSize="68px"
+
+        android:layout_below="@+id/iv_close"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:id="@+id/textView" />
+
     <ImageView
         android:id="@+id/iv"
         android:src="@drawable/img_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="142dp" />
-    <TextView
-        android:layout_below="@+id/iv"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="Place your phone into your Default Cardboard viewer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_width="248dp"
+        android:layout_height="248dp"
+        android:layout_marginTop="22dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+
 </RelativeLayout>

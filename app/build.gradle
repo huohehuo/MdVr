@@ -17,6 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+	
+	//生成的apk文件重命名：app-debug-3.0.6.apk
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            output.outputFile = new File(file.parent, file.name.replace(".apk", "-GoSparkVr-" + defaultConfig.versionName + ".apk"))
+        }
+    }
 }
 
 dependencies {

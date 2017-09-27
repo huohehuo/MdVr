@@ -1,0 +1,176 @@
+{
+  "bgpic": "http://attachments.gfan.com/forum/attachments2/201408/28/225557gmw08txms60gqag6.jpg",
+  "topmenu": [
+    {
+      "title": "全部",
+      "id": 100,
+      "total": 8,
+      "items": [
+        {
+          "id": "1",
+          "title": "Rap",
+          "pic": "http://down1.cnmo.com/app/a141/haimianbaobao46.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "2",
+          "title": "Rap",
+          "pic": "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1505813828683&di=b93489633762b50c68d85733c430fe1c&imgtype=0&src=http%3A%2F%2Fpic.baike.soso.com%2Fp%2F20101108%2F20101108160056-1620231282.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "3",
+          "title": "Rap",
+          "pic": "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1505813861210&di=4060cfc27de0136d5cfc75e8c1706dfe&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20160517%2F9373a554f8dc4a2abe1eaa1eb184932d_th.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "4",
+          "title": "Rap",
+          "pic": "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=212789842,2590627657&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "5",
+          "title": "Rap",
+          "pic": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3668304928,3616897018&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "6",
+          "title": "Rap",
+          "pic": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3017676959,3946281003&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "7",
+          "title": "Rap",
+          "pic": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2817874446,2575840658&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "8",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        }
+      ]
+    },
+    {
+      "title": "自然",
+      "id": 101,
+      "total": 4,
+      "items": [
+        {
+          "id": "1",
+          "title": "Rap",
+          "pic": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2817874446,2575840658&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "2",
+          "title": "Rap",
+          "pic": "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1505813828683&di=b93489633762b50c68d85733c430fe1c&imgtype=0&src=http%3A%2F%2Fpic.baike.soso.com%2Fp%2F20101108%2F20101108160056-1620231282.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "3",
+          "title": "Rap",
+          "pic": "http://down1.cnmo.com/app/a141/haimianbaobao46.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "4",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        }
+      ]
+    },
+    {
+      "title": "人文",
+      "id": 102,
+      "total": 4,
+      "items": [
+        {
+          "id": "1",
+          "title": "Rap",
+          "pic": "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=1932272665,2441554604&fm=111&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "2",
+          "title": "Rap",
+          "pic": "http://down1.cnmo.com/app/a141/haimianbaobao46.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "3",
+          "title": "Rap",
+          "pic": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3021508297,276469794&fm=111&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        },
+        {
+          "id": "4",
+          "title": "Rap",
+          "pic": "https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=350201282,1802637288&fm=27&gp=0.jpg",
+          "stream": "http://cache.utovr.com/201508270528174780.m3u8"
+        }
+      ]
+    }
+  ]
+}
